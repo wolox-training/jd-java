@@ -30,6 +30,11 @@ public class BookController {
     return bookRepository.findAll();
   }
 
+  @GetMapping("/{id}")
+  public Book findOne(@PathVariable long id) throws BookNotFoundException {
+    return bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
+  }
+
   @PostMapping
   @ResponseStatus(HttpStatus.CREATED)
   public Book create(@RequestBody Book book) {
