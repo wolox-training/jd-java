@@ -1,11 +1,16 @@
 package wolox.training.models;
 
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
+import javax.persistence.Table;
 
 @Entity
+@Table(name = "books")
 public class Book {
 
   @Id
@@ -38,6 +43,9 @@ public class Book {
 
   @Column(nullable = false, unique = true)
   private String isbn;
+
+  @ManyToMany(mappedBy = "books")
+  private List<User> users;
 
   public Book() {
   }
@@ -120,5 +128,9 @@ public class Book {
 
   public void setIsbn(String isbn) {
     this.isbn = isbn;
+  }
+
+  public List<User> getUsers() {
+    return users;
   }
 }
