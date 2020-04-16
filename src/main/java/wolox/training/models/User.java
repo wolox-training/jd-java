@@ -1,5 +1,8 @@
 package wolox.training.models;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonManagedReference;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -38,31 +41,29 @@ public class User {
     private String name;
 
     @Column(nullable = false)
+    @JsonProperty("birth_date")
     private LocalDate birthDate;
 
     @ManyToMany
     @JoinTable(name = "users_books",
-        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id"))
+        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false),
+        inverseJoinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id", insertable = false, updatable = false))
+    @JsonManagedReference
     private List<Book> books;
 
     public List<Book> getBooks() {
         return (List<Book>) Collections.unmodifiableList(books);
     }
 
-    public void setBooks(List<Book> books) throws BookAlreadyOwnedException {
-        if (haveDuplicateBooks(books)) {
+    public void addBook(Book book) throws BookAlreadyOwnedException {
+        if (this.books.contains(book)) {
             throw new BookAlreadyOwnedException();
         }
 
-        this.books = books;
+        this.books.add(book);
     }
 
-    private boolean haveDuplicateBooks(List<Book> books) {
-        return countDuplicates(this.books, books) != 0 || countDuplicates(books, books) != 0;
-    }
-
-    private long countDuplicates(List<Book> searchIn, List<Book> search) {
-        return searchIn.stream().filter(book -> Collections.frequency(search, book) > 1).count();
+    public void removeBook(Book book) {
+        this.books.remove(book);
     }
 }

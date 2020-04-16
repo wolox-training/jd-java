@@ -1,5 +1,6 @@
 package wolox.training.models;
 
+import com.fasterxml.jackson.annotation.JsonBackReference;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -54,6 +55,7 @@ public class Book {
     private String isbn;
 
     @ManyToMany(mappedBy = "books")
+    @JsonBackReference
     private List<User> users;
 
 }
