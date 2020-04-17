@@ -1,6 +1,8 @@
 package wolox.training.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -28,6 +30,7 @@ public class Book {
     private long id;
 
     @Column
+    @ApiModelProperty(notes = "The book genre: could be horror, comedy, drama, etc.")
     private String genre;
 
     @Column(nullable = false)
