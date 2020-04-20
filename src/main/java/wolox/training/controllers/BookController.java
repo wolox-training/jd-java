@@ -5,6 +5,12 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
+/**
+ * Entry point to books routes
+ *
+ * @author Jorge Díaz
+ * @version 1.0.0
+ */
 @Controller
 public class BookController {
 
