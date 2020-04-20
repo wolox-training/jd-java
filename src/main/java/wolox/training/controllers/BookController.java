@@ -109,7 +109,7 @@ public class BookController {
      * @throws BookNotFoundException
      */
     @PutMapping("/{id}")
-    @ApiOperation(value = "Returns book updated", response = Book.class)
+    @ApiOperation(value = "Returns book updated")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Updates user correctly"),
         @ApiResponse(code = 400, message = "Book Id mismatch"),
