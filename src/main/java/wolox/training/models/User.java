@@ -19,6 +19,12 @@ import lombok.Setter;
 import lombok.ToString;
 import wolox.training.exceptions.BookAlreadyOwnedException;
 
+/**
+ * User model is using to save users data
+ *
+ * @author Jorge Díaz
+ * @version 1.0.0
+ */
 @Entity
 @Table(name = "users")
 @Getter
