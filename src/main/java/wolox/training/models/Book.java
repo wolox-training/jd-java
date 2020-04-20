@@ -11,6 +11,12 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
 
+/**
+ * Book model is using to save books data
+ *
+ * @author Jorge Díaz
+ * @version 1.0.0
+ */
 @Entity
 @Table(name = "books")
 @Getter
