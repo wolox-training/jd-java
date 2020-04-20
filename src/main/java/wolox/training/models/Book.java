@@ -1,11 +1,11 @@
 package wolox.training.models;
 
 import com.fasterxml.jackson.annotation.JsonBackReference;
-import io.swagger.annotations.ApiModel;
 import io.swagger.annotations.ApiModelProperty;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
@@ -60,5 +60,4 @@ public class Book {
     @ManyToMany(mappedBy = "books")
     @JsonBackReference
     private List<User> users;
-
 }
