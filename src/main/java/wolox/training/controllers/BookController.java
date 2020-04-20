@@ -18,29 +18,62 @@ import wolox.training.exceptions.BookNotFoundException;
 import wolox.training.models.Book;
 import wolox.training.repositories.BookRepository;
 
+/**
+ * Entry point to books routes
+ *
+ * @author Jorge Díaz
+ * @version 1.0.0
+ */
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
 
+    /**
+     * Entry point to IO database operations
+     */
     @Autowired
     private BookRepository bookRepository;
 
+    /**
+     * Get all books
+     *
+     * @return Iterable with all books
+     */
     @GetMapping
     public Iterable findAll() {
         return bookRepository.findAll();
     }
 
+    /**
+     * Shows a book by id
+     *
+     * @param id identification's book
+     * @return Book's model
+     * @throws BookNotFoundException
+     */
     @GetMapping("/{id}")
     public Book findOne(@PathVariable long id) throws BookNotFoundException {
         return bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
     }
 
+    /**
+     * Creates a book
+     *
+     * @param book body params request
+     * @return Book's model
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public Book create(@RequestBody Book book) {
         return bookRepository.save(book);
     }
 
+    /**
+     * Deletes a book
+     *
+     * @param id identification's book
+     * @throws BookNotFoundException
+     */
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) throws BookNotFoundException {
         bookRepository.findById(id)
@@ -48,6 +81,15 @@ public class BookController {
         bookRepository.deleteById(id);
     }
 
+    /**
+     * Updates a book
+     *
+     * @param book body params request
+     * @param id   identifications's book
+     * @return Book's model
+     * @throws BookIdMismatchException
+     * @throws BookNotFoundException
+     */
     @PutMapping("/{id}")
     public Book update(@RequestBody Book book, @PathVariable long id)
         throws BookIdMismatchException, BookNotFoundException {
@@ -59,7 +101,13 @@ public class BookController {
         return bookRepository.save(book);
     }
 
-    @GetMapping("/greeting")
+    /**
+     * Shows a greeting message
+     *
+     * @param name  request param to show on greeting message
+     * @param model model object to add response data for view
+     * @return show greeting view html
+     */
     public String greeting(@RequestParam(name = "name", defaultValue = "world") String name,
         Model model) {
         model.addAttribute("name", name);
