@@ -29,12 +29,23 @@ import wolox.training.repositories.UserRepository;
 @Api
 public class UserController {
 
+    /**
+     * Entry point to user's IO database operations
+     */
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Entry point to book's IO database operations
+     */
     @Autowired
     private BookRepository bookRepository;
 
+    /**
+     * Get all users
+     *
+     * @return Iterable with all users
+     */
     @GetMapping
     @ApiOperation(value = "Return all users with books collection", response = Iterable.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Return all users")})
@@ -42,6 +53,13 @@ public class UserController {
         return userRepository.findAll();
     }
 
+    /**
+     * Shows an user by id
+     *
+     * @param id identification's user
+     * @return User's model
+     * @throws UserNotFoundException
+     */
     @GetMapping("/{id}")
     @ApiOperation(value = "Return user", response = User.class)
     @ApiResponses(value = {
@@ -52,6 +70,12 @@ public class UserController {
         return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
+    /**
+     * Creates an user
+     *
+     * @param user body params request
+     * @return User's model
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     @ApiOperation(value = "Return user created", response = User.class)
@@ -62,35 +86,61 @@ public class UserController {
         return userRepository.save(user);
     }
 
+    /**
+     * Deletes an user
+     *
+     * @param id identification's user
+     * @throws UserNotFoundException
+     */
     @DeleteMapping("/{id}")
     @ApiOperation(value = "Deletes correctly")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Deletes correctly"),
         @ApiResponse(code = 404, message = "User Not Found")
     })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) throws UserNotFoundException {
         userRepository.findById(id)
             .orElseThrow(UserNotFoundException::new);
         userRepository.deleteById(id);
     }
 
+    /**
+     * Updates a book
+     *
+     * @param user body params request
+     * @param id   identifications's user
+     * @throws UserIdMismatchException
+     * @throws UserNotFoundException
+     */
     @PutMapping("/{id}")
-    @ApiOperation(value = "Returns user updated", response = User.class)
+    @ApiOperation(value = "Returns user updated")
     @ApiResponses(value = {
         @ApiResponse(code = 200, message = "Updates user correctly"),
         @ApiResponse(code = 400, message = "User Id mismatch"),
         @ApiResponse(code = 404, message = "User Not Found")
     })
-    public User update(@RequestBody User user, @PathVariable long id)
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(@RequestBody User user, @PathVariable long id)
         throws UserIdMismatchException, UserNotFoundException {
         if (user.getId() != id) {
             throw new UserIdMismatchException();
         }
         userRepository.findById(id)
             .orElseThrow(UserNotFoundException::new);
-        return userRepository.save(user);
+        userRepository.save(user);
     }
 
+    /**
+     * Add a book to user's collection
+     *
+     * @param id     user's identification
+     * @param bookId book's identification
+     * @return User's model
+     * @throws UserNotFoundException
+     * @throws BookNotFoundException
+     * @throws BookAlreadyOwnedException
+     */
     @PostMapping("/{id}/books/{bookId}/add")
     @ApiOperation(value = "Returns user with added book", response = User.class)
     @ApiResponses(value = {
@@ -110,6 +160,15 @@ public class UserController {
         return userRepository.save(user);
     }
 
+    /**
+     * Remove book from user's collection
+     *
+     * @param id     user's identification
+     * @param bookId book's identification
+     * @return User's model
+     * @throws UserNotFoundException
+     * @throws BookNotFoundException
+     */
     @PostMapping("/{id}/books/{bookId}/remove")
     @ApiOperation(value = "Returns user with removed book", response = User.class)
     @ApiResponses(value = {
