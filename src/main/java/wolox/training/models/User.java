@@ -1,8 +1,5 @@
 package wolox.training.models;
 
-import com.fasterxml.jackson.annotation.JsonInclude;
-import com.fasterxml.jackson.annotation.JsonInclude.Include;
-import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
 import java.util.ArrayList;
@@ -21,6 +18,7 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 import lombok.ToString;
+import wolox.training.config.annotations.NotNullConstraint;
 import wolox.training.exceptions.BookAlreadyOwnedException;
 
 @Entity
@@ -37,12 +35,14 @@ public class User {
     private long id;
 
     @Column(nullable = false, unique = true)
+    @NotNullConstraint
     private String username;
 
     @Column(nullable = false)
     private String name;
 
     @Column(nullable = false)
+    @NotNullConstraint
     @JsonProperty("birth_date")
     private LocalDate birthDate;
 
