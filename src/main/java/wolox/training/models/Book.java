@@ -89,6 +89,9 @@ public class Book {
     @Column(nullable = false, unique = true)
     private String isbn;
 
+    /**
+     * Users that have the book
+     */
     @ManyToMany(mappedBy = "books")
     private List<User> users;
 
