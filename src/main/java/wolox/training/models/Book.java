@@ -19,35 +19,65 @@ import lombok.ToString;
 @ToString
 public class Book {
 
+    /**
+     * Book's auto generated identification
+     */
     @Id
     @GeneratedValue
     @Setter(AccessLevel.NONE)
     private long id;
 
+    /**
+     * Book's genre; can be horror, drama, etc.
+     */
     @Column
     private String genre;
 
+    /**
+     * Author's name of the book
+     */
     @Column(nullable = false)
     private String author;
 
+    /**
+     * URL's image
+     */
     @Column(nullable = false)
     private String image;
 
+    /**
+     * Book's title
+     */
     @Column(nullable = false)
     private String title;
 
+    /**
+     * Book's subtitle
+     */
     @Column(nullable = false)
     private String subtitle;
 
+    /**
+     * Book's publisher
+     */
     @Column(nullable = false)
     private String publisher;
 
+    /**
+     * Book's publishing year
+     */
     @Column(nullable = false)
     private String year;
 
+    /**
+     * Book's quantity pages
+     */
     @Column(nullable = false)
     private int pages;
 
+    /**
+     * Book's ISBN
+     */
     @Column(nullable = false, unique = true)
     private String isbn;
 
