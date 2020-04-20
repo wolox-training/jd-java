@@ -18,6 +18,12 @@ import wolox.training.exceptions.BookNotFoundException;
 import wolox.training.models.Book;
 import wolox.training.repositories.BookRepository;
 
+/**
+ * Entry point to books routes
+ *
+ * @author Jorge Díaz
+ * @version 1.0.0
+ */
 @RestController
 @RequestMapping("/api/books")
 public class BookController {
@@ -59,7 +65,13 @@ public class BookController {
         return bookRepository.save(book);
     }
 
-    @GetMapping("/greeting")
+    /**
+     * Shows a greeting message
+     *
+     * @param name  request param to show on greeting message
+     * @param model model object to add response data for view
+     * @return show greeting view html
+     */
     public String greeting(@RequestParam(name = "name", defaultValue = "world") String name,
         Model model) {
         model.addAttribute("name", name);
