@@ -3,6 +3,7 @@ package wolox.training.models;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -69,7 +70,6 @@ public class User {
     @JoinTable(name = "users_books",
         joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id", insertable = false, updatable = false),
         inverseJoinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id", insertable = false, updatable = false))
-    @JsonManagedReference
     private List<Book> books;
 
     /**
@@ -78,7 +78,11 @@ public class User {
      * @return List of books that belongs to the user
      */
     public List<Book> getBooks() {
-        return (List<Book>) Collections.unmodifiableList(books);
+        if (books != null) {
+            return (List<Book>) Collections.unmodifiableList(books);
+        } else {
+            return new ArrayList<Book>();
+        }
     }
 
     /**
