@@ -1,5 +1,7 @@
 package wolox.training.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
@@ -25,6 +27,9 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
+@JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id")
 public class Book {
 
     /**

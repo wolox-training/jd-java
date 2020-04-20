@@ -1,5 +1,7 @@
 package wolox.training.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.time.LocalDate;
 import java.util.Collections;
 import java.util.List;
@@ -31,6 +33,9 @@ import wolox.training.exceptions.BookAlreadyOwnedException;
 @Setter
 @NoArgsConstructor
 @ToString
+@JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id")
 public class User {
 
     /**
