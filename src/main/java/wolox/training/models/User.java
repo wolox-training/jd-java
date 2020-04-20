@@ -1,6 +1,5 @@
 package wolox.training.models;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonManagedReference;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import java.time.LocalDate;
@@ -22,6 +21,12 @@ import lombok.Setter;
 import lombok.ToString;
 import wolox.training.exceptions.BookAlreadyOwnedException;
 
+/**
+ * User model is using to save users data
+ *
+ * @author Jorge Díaz
+ * @version 1.0.0
+ */
 @Entity
 @Table(name = "users")
 @Getter

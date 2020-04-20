@@ -25,28 +25,58 @@ import wolox.training.repositories.UserRepository;
 @RequestMapping("/api/users")
 public class UserController {
 
+    /**
+     * Entry point to user's IO database operations
+     */
     @Autowired
     private UserRepository userRepository;
 
+    /**
+     * Entry point to book's IO database operations
+     */
     @Autowired
     private BookRepository bookRepository;
 
+    /**
+     * Get all users
+     *
+     * @return Iterable with all users
+     */
     @GetMapping
     public Iterable findAll() {
         return userRepository.findAll();
     }
 
+    /**
+     * Shows an user by id
+     *
+     * @param id identification's user
+     * @return User's model
+     * @throws UserNotFoundException
+     */
     @GetMapping("/{id}")
     public User findOne(@PathVariable long id) throws UserNotFoundException {
         return userRepository.findById(id).orElseThrow(UserNotFoundException::new);
     }
 
+    /**
+     * Creates an user
+     *
+     * @param user body params request
+     * @return User's model
+     */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public User create(@RequestBody User user) {
         return userRepository.save(user);
     }
 
+    /**
+     * Deletes an user
+     *
+     * @param id identification's user
+     * @throws UserNotFoundException
+     */
     @DeleteMapping("/{id}")
     public void delete(@PathVariable Long id) throws UserNotFoundException {
         userRepository.findById(id)
@@ -54,6 +84,15 @@ public class UserController {
         userRepository.deleteById(id);
     }
 
+    /**
+     * Updates a book
+     *
+     * @param user body params request
+     * @param id   identifications's user
+     * @return User's model
+     * @throws UserIdMismatchException
+     * @throws UserNotFoundException
+     */
     @PutMapping("/{id}")
     public User update(@RequestBody User user, @PathVariable long id)
         throws UserIdMismatchException, UserNotFoundException {
@@ -65,6 +104,16 @@ public class UserController {
         return userRepository.save(user);
     }
 
+    /**
+     * Add a book to user's collection
+     *
+     * @param id     user's identification
+     * @param bookId book's identification
+     * @return User's model
+     * @throws UserNotFoundException
+     * @throws BookNotFoundException
+     * @throws BookAlreadyOwnedException
+     */
     @PostMapping("/{id}/books/{bookId}/add")
     public User addBook(@PathVariable long id, @PathVariable long bookId)
         throws UserNotFoundException, BookNotFoundException, BookAlreadyOwnedException {
@@ -78,6 +127,15 @@ public class UserController {
         return userRepository.save(user);
     }
 
+    /**
+     * Remove book from user's collection
+     *
+     * @param id     user's identification
+     * @param bookId book's identification
+     * @return User's model
+     * @throws UserNotFoundException
+     * @throws BookNotFoundException
+     */
     @PostMapping("/{id}/books/{bookId}/remove")
     public User removeBook(@PathVariable long id, @PathVariable long bookId)
         throws UserNotFoundException, BookNotFoundException {
