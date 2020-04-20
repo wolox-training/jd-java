@@ -68,10 +68,7 @@ public class User {
     /**
      * Books that belongs to the user
      */
-    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.EAGER)
-    @JoinTable(name = "users_books",
-        joinColumns = @JoinColumn(name = "user_id", referencedColumnName = "id"),
-        inverseJoinColumns = @JoinColumn(name = "book_id", referencedColumnName = "id"))
+    @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private List<Book> books;
 
     /**
