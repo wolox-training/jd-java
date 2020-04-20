@@ -90,13 +90,12 @@ public class UserController {
      *
      * @param user body params request
      * @param id   identifications's user
-     * @return User's model
      * @throws UserIdMismatchException
      * @throws UserNotFoundException
      */
     @PutMapping("/{id}")
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public User update(@RequestBody User user, @PathVariable long id)
+    public void update(@RequestBody User user, @PathVariable long id)
         throws UserIdMismatchException, UserNotFoundException {
         if (user.getId() != id) {
             throw new UserIdMismatchException();
