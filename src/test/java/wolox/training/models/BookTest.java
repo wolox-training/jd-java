@@ -18,6 +18,7 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.junit4.SpringRunner;
+import wolox.training.factories.BookFactory;
 
 @RunWith(SpringRunner.class)
 @AutoConfigureTestDatabase(replace = Replace.NONE)
@@ -36,20 +37,7 @@ public class BookTest {
     @Before
 
     public void setUp() {
-        Date date = faker.date().past(this.faker.random().nextInt(0, 1000), TimeUnit.DAYS);
-        Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("America/Bogota"));
-        calendar.setTime(date);
-
-        this.bookMap = new HashMap<String, Object>() {{
-            put("author", faker.book().author());
-            put("image", faker.internet().image());
-            put("title", faker.book().title());
-            put("subtitle", faker.book().title());
-            put("publisher", faker.book().publisher());
-            put("year", calendar.get(Calendar.YEAR));
-            put("pages", faker.number().digits(3));
-            put("isbn", faker.hashCode());
-        }};
+        this.bookMap = new BookFactory().book();
 
         this.book = new Book(
             this.bookMap.get("author").toString(),
