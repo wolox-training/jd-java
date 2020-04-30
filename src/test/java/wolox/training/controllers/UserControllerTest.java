@@ -1,16 +1,21 @@
 package wolox.training.controllers;
 
+import static org.hamcrest.Matchers.is;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
+import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -28,12 +33,15 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.NestedServletException;
 import wolox.training.factories.BookFactory;
+import wolox.training.factories.UserFactory;
 import wolox.training.models.Book;
+import wolox.training.models.User;
 import wolox.training.repositories.BookRepository;
+import wolox.training.repositories.UserRepository;
 
 @RunWith(SpringRunner.class)
-@WebMvcTest(BookController.class)
-public class BookControllerTest {
+@WebMvcTest(UserController.class)
+public class UserControllerTest {
 
     @Autowired
     private WebApplicationContext webApplicationContext;
@@ -42,21 +50,34 @@ public class BookControllerTest {
     private MockMvc mockMvc;
 
     @MockBean
+    private UserRepository userRepository;
+
+    @MockBean
     private BookRepository bookRepository;
+
+    private User user;
+
+    private ArrayList<User> userList;
+
+    private HashMap<String, Object> userMap;
+
+    private ObjectMapper objectMapper = new ObjectMapper();
 
     private Book book;
 
-    private ArrayList<Book> bookList;
-
     private HashMap<String, Object> bookMap;
-
-    private String bookJsonList;
-
-    private ObjectMapper objectMapper = new ObjectMapper();
 
     @Before
     public void setup() throws JsonProcessingException {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
+
+        this.userMap = new UserFactory().user();
+        this.user = new User(
+            this.userMap.get("username").toString(),
+            this.userMap.get("name").toString(),
+            LocalDate.parse(this.userMap.get("birth_date").toString())
+        );
+        this.user.setBooks(new ArrayList<>());
 
         this.bookMap = new BookFactory().book();
         this.book = new Book(
@@ -70,120 +91,210 @@ public class BookControllerTest {
             bookMap.get("isbn").toString()
         );
 
-        this.bookList = new ArrayList<Book>(Arrays.asList(
-            this.book
+        this.userList = new ArrayList<User>(Arrays.asList(
+            this.user
         ));
     }
 
     @Test
-    public void whenGetAllBooks_thenReturnJsonArray() throws Exception {
-        given(this.bookRepository.findAll()).willReturn(this.bookList);
+    public void whenGetAllUsers_thenReturnJsonArray() throws Exception {
+        given(this.userRepository.findAll()).willReturn(this.userList);
 
-        this.mockMvc.perform(get("/api/books").contentType(MediaType.APPLICATION_JSON))
+        this.mockMvc.perform(get("/api/users").contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().json(this.objectMapper.writeValueAsString(this.bookList)));
+            .andExpect(jsonPath("$[0].name", is(this.user.getName())))
+            .andExpect(jsonPath("$[0].username", is(this.user.getUsername())))
+            .andExpect(jsonPath("$[0].birth_date", is(
+                this.user.getBirthDate().format(DateTimeFormatter.ISO_LOCAL_DATE)
+            )));
     }
 
     @Test
-    public void whenGetOneBookAndFound_thenReturnJson() throws Exception {
-        given(this.bookRepository.findById(this.book.getId())).willReturn(Optional.of(this.book));
+    public void whenGetOneUserAndFound_thenReturnJson() throws Exception {
+        given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
 
         this.mockMvc
-            .perform(get("/api/books/" + this.book.getId()).contentType(MediaType.APPLICATION_JSON))
+            .perform(get("/api/users/" + this.user.getId()).contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
-            .andExpect(content().json(this.objectMapper.writeValueAsString(this.book)));
+            .andExpect(jsonPath("$.name", is(this.user.getName())))
+            .andExpect(jsonPath("$.username", is(this.user.getUsername())))
+            .andExpect(jsonPath("$.birth_date", is(
+                this.user.getBirthDate().format(DateTimeFormatter.ISO_LOCAL_DATE)
+            )));
     }
 
     @Test
-    public void whenGetOneBookAndNotFound_thenReturnJsonError() throws Exception {
-        given(this.bookRepository.findById(this.book.getId()))
+    public void whenGetOneUserAndNotFound_thenReturnJsonError() throws Exception {
+        given(this.userRepository.findById(this.user.getId()))
             .willReturn(Optional.empty());
 
         this.mockMvc
-            .perform(get("/api/books/" + this.book.getId()).contentType(MediaType.APPLICATION_JSON))
+            .perform(get("/api/users/" + this.user.getId()).contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().is4xxClientError());
     }
 
     @Test
-    public void whenSavesABook_thenReturnBookJson() throws Exception {
-        given(this.bookRepository.save(this.book)).willReturn(this.book);
+    public void whenSavesAUser_thenReturnUserJson() throws Exception {
+        given(this.userRepository.save(this.user)).willReturn(this.user);
 
         this.mockMvc
-            .perform(post("/api/books")
+            .perform(post("/api/users")
                          .contentType(MediaType.APPLICATION_JSON)
                          .characterEncoding("utf-8")
-                         .content(this.objectMapper.writeValueAsString(this.bookMap)))
+                         .content(this.objectMapper.writeValueAsString(this.userMap)))
             .andExpect(status().isCreated())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test(expected = NestedServletException.class)
-    public void whenSavesABookWithoutRequiredParams_thenReturnBookJson() throws Exception {
-        when(this.bookRepository.save(this.book)).thenThrow(NullPointerException.class);
+    public void whenSavesAUserWithoutRequiredParams_thenReturnUserJson() throws Exception {
+        when(this.userRepository.save(this.user)).thenThrow(NullPointerException.class);
 
         this.mockMvc
-            .perform(post("/api/books")
+            .perform(post("/api/users")
                          .contentType(MediaType.APPLICATION_JSON)
                          .characterEncoding("utf-8")
-                         .content(this.objectMapper.writeValueAsString(this.bookMap)))
+                         .content(this.objectMapper.writeValueAsString(this.userMap)))
             .andExpect(status().is5xxServerError())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
-    public void whenDeletesABook_thenReturnNoContent() throws Exception {
-        given(this.bookRepository.findById(this.book.getId())).willReturn(Optional.of(this.book));
+    public void whenDeletesAUser_thenReturnNoContent() throws Exception {
+        given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
 
         this.mockMvc
-            .perform(delete("/api/books/" + this.book.getId()))
+            .perform(delete("/api/users/" + this.user.getId()))
             .andExpect(status().isNoContent());
     }
 
     @Test
-    public void whenDeletesABookAndNotFound_thenReturnJsonError() throws Exception {
-        given(this.bookRepository.findById(this.book.getId()))
+    public void whenDeletesAUserAndNotFound_thenReturnJsonError() throws Exception {
+        given(this.userRepository.findById(this.user.getId()))
             .willReturn(Optional.empty());
 
         this.mockMvc
-            .perform(delete("/api/books" + this.book.getId()))
+            .perform(delete("/api/users/" + this.user.getId()))
             .andExpect(status().is4xxClientError());
     }
 
     @Test
-    public void whenUpdatesABook_thenReturnBookJson() throws Exception {
-        given(this.bookRepository.findById(this.book.getId())).willReturn(Optional.of(this.book));
-        given(this.bookRepository.save(this.book)).willReturn(this.book);
+    public void whenUpdatesAUser_thenReturnUserJson() throws Exception {
+        given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
+        given(this.userRepository.save(this.user)).willReturn(this.user);
 
         this.mockMvc
-            .perform(put("/api/books/" + this.book.getId())
+            .perform(put("/api/users/" + this.user.getId())
                          .contentType(MediaType.APPLICATION_JSON)
                          .characterEncoding("utf-8")
-                         .content(this.objectMapper.writeValueAsString(this.bookMap)))
+                         .content(this.objectMapper.writeValueAsString(this.userMap)))
             .andExpect(status().isNoContent());
     }
 
     @Test
-    public void whenUpdatesABookButBookIdMismatch_thenReturnJsonError() throws Exception {
+    public void whenUpdatesAUserButUserIdMismatch_thenReturnJsonError() throws Exception {
         this.mockMvc
-            .perform(put("/api/books/9999")
+            .perform(put("/api/users/9999")
                          .contentType(MediaType.APPLICATION_JSON)
                          .characterEncoding("utf-8")
-                         .content(this.objectMapper.writeValueAsString(this.bookMap)))
+                         .content(this.objectMapper.writeValueAsString(this.userMap)))
             .andExpect(status().is4xxClientError());
     }
 
     @Test
-    public void whenUpdateABookAndNotFound_thenReturnJsonError() throws Exception {
-        given(this.bookRepository.findById(this.book.getId()))
+    public void whenUpdateAUserAndNotFound_thenReturnJsonError() throws Exception {
+        given(this.userRepository.findById(this.user.getId()))
             .willReturn(Optional.empty());
 
         this.mockMvc
-            .perform(put("/api/books/" + this.book.getId())
+            .perform(put("/api/users/" + this.user.getId())
                          .contentType(MediaType.APPLICATION_JSON)
                          .characterEncoding("utf-8")
-                         .content(this.objectMapper.writeValueAsString(this.bookMap)))
+                         .content(this.objectMapper.writeValueAsString(this.userMap)))
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void whenAddBook_thenReturnJson() throws Exception {
+        given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
+        given(this.bookRepository.findById(this.book.getId())).willReturn(Optional.of(this.book));
+        given(this.userRepository.save(this.user)).willReturn(this.user);
+
+        this.mockMvc.perform(
+            post("/api/users/" + this.user.getId() + "/books/" + this.book.getId() + "/add")
+        )
+            .andDo(print())
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void whenAddBookButUserNotFound_thenReturnJsonError() throws Exception {
+        given(this.userRepository.findById(this.user.getId()))
+            .willReturn(Optional.empty());
+
+        this.mockMvc.perform(
+            post("/api/users/" + this.user.getId() + "/books/" + this.book.getId() + "/add")
+        )
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void whenAddBookButBookNotFound_thenReturnJsonError() throws Exception {
+        given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
+        given(this.bookRepository.findById(this.book.getId())).willReturn(Optional.empty());
+
+        this.mockMvc.perform(
+            post("/api/users/" + this.user.getId() + "/books/" + this.book.getId() + "/add")
+        )
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void whenAddBookButBookAlreadyOwned_thenReturnJsonError() throws Exception {
+        this.user.addBook(this.book);
+        given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
+        given(this.bookRepository.findById(this.book.getId())).willReturn(Optional.of(this.book));
+
+        this.mockMvc.perform(
+            post("/api/users/" + this.user.getId() + "/books/" + this.book.getId() + "/add")
+        )
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void whenRemoveABook_thenReturnJson() throws Exception {
+        given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
+        given(this.bookRepository.findById(this.book.getId())).willReturn(Optional.of(this.book));
+        given(this.userRepository.save(this.user)).willReturn(this.user);
+
+        this.mockMvc.perform(
+            post("/api/users/" + this.user.getId() + "/books/" + this.book.getId() + "/add")
+        )
+            .andDo(print())
+            .andExpect(status().isOk());
+    }
+
+    @Test
+    public void whenRemoveABookButUserNotFound_thenReturnJsonError() throws Exception {
+        given(this.userRepository.findById(this.user.getId()))
+            .willReturn(Optional.empty());
+
+        this.mockMvc.perform(
+            post("/api/users/" + this.user.getId() + "/books/" + this.book.getId() + "/add")
+        )
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void whenRemoveABookButBookNotFound_thenReturnJsonError() throws Exception {
+        given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
+        given(this.bookRepository.findById(this.book.getId())).willReturn(Optional.empty());
+
+        this.mockMvc.perform(
+            post("/api/users/" + this.user.getId() + "/books/" + this.book.getId() + "/add")
+        )
             .andExpect(status().is4xxClientError());
     }
 }
