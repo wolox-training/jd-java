@@ -2,7 +2,6 @@ package wolox.training.models;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.github.javafaker.Faker;
 import java.time.LocalDate;
 import java.util.Map;
 import org.junit.Before;
@@ -26,12 +25,9 @@ public class UserTest {
 
     private User user;
 
-    private Faker faker = new Faker();
-
     private Map<String, Object> userMap;
 
     @Before
-
     public void setUp() {
         this.userMap = new UserFactory().user();
 
@@ -43,7 +39,7 @@ public class UserTest {
     }
 
     @Test
-    public void whenSaveBook_thenBookShouldFound() {
+    public void whenSaveUser_thenUserShouldFound() {
         User savedUser = this.testEntityManager.persistFlushFind(this.user);
 
         assertThat(savedUser.getId()).isNotNull();

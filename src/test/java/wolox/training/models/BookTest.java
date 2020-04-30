@@ -2,13 +2,7 @@ package wolox.training.models;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import com.github.javafaker.Faker;
-import java.util.Calendar;
-import java.util.Date;
-import java.util.HashMap;
 import java.util.Map;
-import java.util.TimeZone;
-import java.util.concurrent.TimeUnit;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -30,12 +24,9 @@ public class BookTest {
 
     private Book book;
 
-    private Faker faker = new Faker();
-
     private Map<String, Object> bookMap;
 
     @Before
-
     public void setUp() {
         this.bookMap = new BookFactory().book();
 
