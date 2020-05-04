@@ -61,6 +61,12 @@ public class User {
     private String name;
 
     /**
+     * Password's user
+     */
+    @Column(nullable = false)
+    private String password;
+
+    /**
      * User's birth date
      */
     @Column(nullable = false)
