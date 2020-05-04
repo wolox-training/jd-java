@@ -17,11 +17,9 @@ import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
-import wolox.training.config.annotations.NotNullConstraint;
+import wolox.training.annotations.NotNullConstraint;
 import wolox.training.exceptions.BookAlreadyOwnedException;
 
 /**

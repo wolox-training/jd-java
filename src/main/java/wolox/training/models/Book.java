@@ -15,7 +15,7 @@ import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import wolox.training.config.annotations.NotNullConstraint;
+import wolox.training.annotations.NotNullConstraint;
 
 /**
  * Book model is using to save books data

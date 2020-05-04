@@ -1,9 +1,9 @@
-package wolox.training.config.validators;
+package wolox.training.validators;
 
 import com.google.common.base.Preconditions;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
-import wolox.training.config.annotations.NotNullConstraint;
+import wolox.training.annotations.NotNullConstraint;
 
 public class NotNullConstraintValidator implements ConstraintValidator<NotNullConstraint, Object> {
 

@@ -1,4 +1,4 @@
-package wolox.training.config.annotations;
+package wolox.training.annotations;
 
 import java.lang.annotation.ElementType;
 import java.lang.annotation.Retention;
@@ -6,7 +6,7 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 import javax.validation.Constraint;
 import javax.validation.Payload;
-import wolox.training.config.validators.NotNullConstraintValidator;
+import wolox.training.validators.NotNullConstraintValidator;
 
 @Target({ElementType.METHOD, ElementType.FIELD, ElementType.PARAMETER})
 @Retention(RetentionPolicy.RUNTIME)
