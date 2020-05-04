@@ -4,8 +4,10 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import io.swagger.annotations.Authorization;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
@@ -40,6 +42,12 @@ public class UserController {
      */
     @Autowired
     private BookRepository bookRepository;
+
+    /**
+     * Password encoder
+     */
+    @Autowired
+    private PasswordEncoder passwordEncoder;
 
     /**
      * Get all users
@@ -83,6 +91,7 @@ public class UserController {
         @ApiResponse(code = 201, message = "Return user created")
     })
     public User create(@RequestBody User user) {
+        user.setPassword(passwordEncoder.encode(user.getPassword()));
         return userRepository.save(user);
     }
 
