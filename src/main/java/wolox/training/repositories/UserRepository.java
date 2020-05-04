@@ -20,4 +20,12 @@ public interface UserRepository extends CrudRepository<User, Long> {
      */
     Optional<User> findFirstByName(String name);
 
+    /**
+     * Find first record by user's username
+     *
+     * @param username author's username
+     * @return optional user
+     */
+    Optional<User> findFirstByUsername(String username);
+
 }
