@@ -61,6 +61,7 @@ public class User {
     /**
      * Password's user
      */
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
     @Column(nullable = false)
     private String password;
 
