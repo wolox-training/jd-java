@@ -1,9 +1,14 @@
 package wolox.training.models;
 
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import java.util.List;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.ManyToMany;
 import javax.persistence.Table;
 import lombok.AccessLevel;
 import lombok.Getter;
@@ -23,6 +28,9 @@ import lombok.ToString;
 @Setter
 @NoArgsConstructor
 @ToString
+@JsonIdentityInfo(
+    generator = ObjectIdGenerators.PropertyGenerator.class,
+    property = "id")
 public class Book {
 
     /**
@@ -86,5 +94,11 @@ public class Book {
      */
     @Column(nullable = false, unique = true)
     private String isbn;
+
+    /**
+     * Users that have the book
+     */
+    @ManyToMany(mappedBy = "books", fetch = FetchType.LAZY)
+    private List<User> users;
 
 }
