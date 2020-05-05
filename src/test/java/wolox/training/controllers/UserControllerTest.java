@@ -23,15 +23,20 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.NestedServletException;
+import wolox.training.config.SecurityConfigTest;
 import wolox.training.factories.BookFactory;
 import wolox.training.factories.UserFactory;
 import wolox.training.models.Book;
@@ -41,6 +46,7 @@ import wolox.training.repositories.UserRepository;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(UserController.class)
+@ContextConfiguration(classes = {SecurityConfigTest.class, UserController.class})
 public class UserControllerTest {
 
     @Autowired
@@ -48,6 +54,12 @@ public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @MockBean
     private UserRepository userRepository;
@@ -75,7 +87,8 @@ public class UserControllerTest {
         this.user = new User(
             this.userMap.get("username").toString(),
             this.userMap.get("name").toString(),
-            LocalDate.parse(this.userMap.get("birth_date").toString())
+            LocalDate.parse(this.userMap.get("birth_date").toString()),
+            this.userMap.get("password").toString()
         );
         this.user.setBooks(new ArrayList<>());
 
@@ -144,19 +157,19 @@ public class UserControllerTest {
                          .contentType(MediaType.APPLICATION_JSON)
                          .characterEncoding("utf-8")
                          .content(this.objectMapper.writeValueAsString(this.userMap)))
-            .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+            .andExpect(status().isCreated());
     }
 
     @Test(expected = NestedServletException.class)
     public void whenSavesAUserWithoutRequiredParams_thenReturnUserJson() throws Exception {
-        when(this.userRepository.save(this.user)).thenThrow(NullPointerException.class);
+        when(this.userRepository.save(Mockito.any())).thenThrow(NullPointerException.class);
 
         this.mockMvc
             .perform(post("/api/users")
                          .contentType(MediaType.APPLICATION_JSON)
                          .characterEncoding("utf-8")
-                         .content(this.objectMapper.writeValueAsString(this.userMap)))
+                         .content(
+                             this.objectMapper.writeValueAsString(this.userMap)))
             .andExpect(status().is5xxServerError())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
@@ -225,7 +238,6 @@ public class UserControllerTest {
         this.mockMvc.perform(
             post("/api/users/" + this.user.getId() + "/books/" + this.book.getId() + "/add")
         )
-            .andDo(print())
             .andExpect(status().isOk());
     }
 
@@ -272,7 +284,6 @@ public class UserControllerTest {
         this.mockMvc.perform(
             post("/api/users/" + this.user.getId() + "/books/" + this.book.getId() + "/add")
         )
-            .andDo(print())
             .andExpect(status().isOk());
     }
 

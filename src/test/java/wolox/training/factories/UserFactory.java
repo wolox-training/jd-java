@@ -15,6 +15,7 @@ public class UserFactory {
             put("username", faker.name().username());
             put("name", faker.name().fullName());
             put("birth_date", getBirthDate().toString());
+            put("password", faker.crypto().md5());
         }};
     }
 

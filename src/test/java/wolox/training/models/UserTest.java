@@ -34,7 +34,8 @@ public class UserTest {
         this.user = new User(
             this.userMap.get("username").toString(),
             this.userMap.get("name").toString(),
-            LocalDate.parse(this.userMap.get("birth_date").toString())
+            LocalDate.parse(this.userMap.get("birth_date").toString()),
+            this.userMap.get("password").toString()
         );
     }
 
