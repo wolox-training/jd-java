@@ -78,10 +78,11 @@ public class User {
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private List<Book> books;
 
-    public User(String username, String name, LocalDate birthDate) {
+    public User(String username, String name, LocalDate birthDate, String password) {
         this.username = username;
         this.name = name;
         this.birthDate = birthDate;
+        this.password = password;
     }
 
     /**
