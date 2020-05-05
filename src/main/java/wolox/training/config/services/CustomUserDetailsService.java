@@ -1,8 +1,6 @@
 package wolox.training.config.services;
 
 import java.util.ArrayList;
-import java.util.Optional;
-import javax.transaction.Transactional;
 import lombok.SneakyThrows;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
@@ -15,15 +13,10 @@ import wolox.training.models.User;
 import wolox.training.repositories.UserRepository;
 
 @Service("UserDetailsService")
-@Transactional
 public class CustomUserDetailsService implements UserDetailsService {
 
     @Autowired
     private UserRepository userRepository;
-
-    public CustomUserDetailsService() {
-        super();
-    }
 
     @SneakyThrows
     @Override
