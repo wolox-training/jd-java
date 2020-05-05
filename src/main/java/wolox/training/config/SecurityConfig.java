@@ -31,7 +31,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
         httpSecurity
             .csrf().disable()
             .authorizeRequests()
-            .antMatchers(HttpMethod.POST, "/api/users", "/api/books", "/login").permitAll()
+            .antMatchers(HttpMethod.POST, "/api/users", "/api/books").permitAll()
             .anyRequest().authenticated()
             .and()
             .httpBasic();
@@ -47,6 +47,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     @Bean
     public PasswordEncoder passwordEncoder() {
-        return new BCryptPasswordEncoder();
+        return new BCryptPasswordEncoder(4);
     }
 }
