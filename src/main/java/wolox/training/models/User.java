@@ -15,6 +15,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Past;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -50,12 +52,14 @@ public class User {
      */
     @Column(nullable = false, unique = true)
     @NotNullConstraint
+    @NotEmpty
     private String username;
 
     /**
      * User's name
      */
     @Column(nullable = false)
+    @NotEmpty
     private String name;
 
     /**
@@ -70,6 +74,7 @@ public class User {
      */
     @Column(nullable = false)
     @NotNullConstraint
+    @Past
     @JsonProperty("birth_date")
     private LocalDate birthDate;
 
