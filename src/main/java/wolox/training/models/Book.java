@@ -11,6 +11,8 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Positive;
 import lombok.AccessLevel;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -52,6 +54,7 @@ public class Book {
      */
     @Column(nullable = false)
     @NotNullConstraint
+    @NotEmpty
     private String author;
 
     /**
@@ -59,6 +62,7 @@ public class Book {
      */
     @Column(nullable = false)
     @NotNullConstraint
+    @NotEmpty
     private String image;
 
     /**
@@ -66,6 +70,7 @@ public class Book {
      */
     @Column(nullable = false)
     @NotNullConstraint
+    @NotEmpty
     private String title;
 
     /**
@@ -73,6 +78,7 @@ public class Book {
      */
     @Column(nullable = false)
     @NotNullConstraint
+    @NotEmpty
     private String subtitle;
 
     /**
@@ -80,6 +86,7 @@ public class Book {
      */
     @Column(nullable = false)
     @NotNullConstraint
+    @NotEmpty
     private String publisher;
 
     /**
@@ -87,6 +94,7 @@ public class Book {
      */
     @Column(nullable = false)
     @NotNullConstraint
+    @NotEmpty
     private String year;
 
     /**
@@ -94,6 +102,7 @@ public class Book {
      */
     @Column(nullable = false)
     @NotNullConstraint
+    @Positive
     private int pages;
 
     /**
@@ -101,6 +110,7 @@ public class Book {
      */
     @Column(nullable = false, unique = true)
     @NotNullConstraint
+    @NotEmpty
     private String isbn;
 
     /**

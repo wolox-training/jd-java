@@ -13,7 +13,9 @@ import wolox.training.config.validators.NotNullConstraintValidator;
 @Constraint(validatedBy = NotNullConstraintValidator.class)
 public @interface NotNullConstraint {
 
-    String message() default "Invalid phone number";
+    public static final String MESSAGE = "Value can not be null";
+
+    String message() default MESSAGE;
 
     Class<?>[] groups() default {};
 

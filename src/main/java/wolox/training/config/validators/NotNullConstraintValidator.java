@@ -1,5 +1,7 @@
 package wolox.training.config.validators;
 
+import static wolox.training.config.annotations.NotNullConstraint.MESSAGE;
+
 import com.google.common.base.Preconditions;
 import javax.validation.ConstraintValidator;
 import javax.validation.ConstraintValidatorContext;
@@ -9,7 +11,7 @@ public class NotNullConstraintValidator implements ConstraintValidator<NotNullCo
 
     @Override
     public boolean isValid(Object value, ConstraintValidatorContext context) {
-        Preconditions.checkNotNull(value, "Value can not be null");
+        Preconditions.checkNotNull(value, MESSAGE);
         return true;
     }
 }
