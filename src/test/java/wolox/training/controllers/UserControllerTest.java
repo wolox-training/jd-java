@@ -5,15 +5,16 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.javafaker.Faker;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
@@ -150,7 +151,7 @@ public class UserControllerTest {
 
     @Test
     public void whenSavesAUser_thenReturnUserJson() throws Exception {
-        given(this.userRepository.save(this.user)).willReturn(this.user);
+        given(this.userRepository.save(Mockito.any())).willReturn(this.user);
 
         this.mockMvc
             .perform(post("/api/users")
@@ -305,6 +306,41 @@ public class UserControllerTest {
 
         this.mockMvc.perform(
             post("/api/users/" + this.user.getId() + "/books/" + this.book.getId() + "/add")
+        )
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void whenUpdateUserPassword_thenReturnNoContent() throws Exception {
+        given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
+        given(this.userRepository.save(Mockito.any())).willReturn(this.user);
+
+        HashMap<String, Object> requestBody = new HashMap<String, Object>() {{
+            put("password", "test");
+        }};
+
+        this.mockMvc.perform(
+            patch("/api/users/" + this.user.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8")
+                .content(this.objectMapper.writeValueAsString(requestBody))
+        )
+            .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    public void whenUpdateUserPasswordButUserNotFound_thenReturnJsonError() throws Exception {
+        given(this.userRepository.findById(this.user.getId()))
+            .willReturn(Optional.empty());
+        HashMap<String, Object> requestBody = new HashMap<String, Object>() {{
+            put("password", "test");
+        }};
+
+        this.mockMvc.perform(
+            patch("/api/users/" + this.user.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8")
+                .content(this.objectMapper.writeValueAsString(requestBody))
         )
             .andExpect(status().is4xxClientError());
     }

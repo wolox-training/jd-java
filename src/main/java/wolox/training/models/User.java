@@ -93,9 +93,9 @@ public class User {
      */
     public List<Book> getBooks() {
         if (books != null) {
-            return (List<Book>) Collections.unmodifiableList(books);
+            return Collections.unmodifiableList(books);
         } else {
-            return new ArrayList<Book>();
+            return new ArrayList<>();
         }
     }
 

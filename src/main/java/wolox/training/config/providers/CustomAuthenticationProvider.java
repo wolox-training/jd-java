@@ -5,14 +5,12 @@ import org.springframework.security.authentication.BadCredentialsException;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.authentication.dao.DaoAuthenticationProvider;
 import org.springframework.security.core.Authentication;
-import org.springframework.security.core.AuthenticationException;
 import org.springframework.security.core.userdetails.UserDetails;
 
 public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
 
     @Override
-    public Authentication authenticate(Authentication authentication)
-        throws AuthenticationException {
+    public Authentication authenticate(Authentication authentication) {
         String username = authentication.getName();
         String password = authentication.getCredentials().toString();
 
@@ -28,7 +26,7 @@ public class CustomAuthenticationProvider extends DaoAuthenticationProvider {
         return authentication.equals(UsernamePasswordAuthenticationToken.class);
     }
 
-    private Boolean userValid(String username, String password) {
+    private boolean userValid(String username, String password) {
         UserDetails userDetails = this.getUserDetailsService().loadUserByUsername(username);
         return this.getPasswordEncoder().matches(password, userDetails.getPassword());
     }

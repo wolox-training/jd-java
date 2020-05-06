@@ -6,7 +6,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import wolox.training.exceptions.UserNotFoundException;
 import wolox.training.models.User;
@@ -20,7 +19,7 @@ public class CustomUserDetailsService implements UserDetailsService {
 
     @SneakyThrows
     @Override
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
+    public UserDetails loadUserByUsername(String username) {
         User user = this.userRepository.findFirstByUsername(username)
                         .orElseThrow(UserNotFoundException::new);
         return new org.springframework.security.core.userdetails.User(

@@ -4,14 +4,13 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
-import io.swagger.annotations.Authorization;
-import io.swagger.annotations.ResponseHeader;
+import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.MediaType;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -59,7 +58,7 @@ public class UserController {
     @GetMapping
     @ApiOperation(value = "Return all users with books collection", response = Iterable.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Return all users")})
-    public Iterable findAll() {
+    public Iterable<User> findAll() {
         return userRepository.findAll();
     }
 
@@ -117,7 +116,7 @@ public class UserController {
     }
 
     /**
-     * Updates a book
+     * Updates a user
      *
      * @param user body params request
      * @param id   identifications's user
@@ -137,8 +136,30 @@ public class UserController {
         if (user.getId() != id) {
             throw new UserIdMismatchException();
         }
-        userRepository.findById(id)
-            .orElseThrow(UserNotFoundException::new);
+        User userFound = userRepository.findById(id)
+                             .orElseThrow(UserNotFoundException::new);
+        user.setPassword(userFound.getPassword());
+        userRepository.save(user);
+    }
+
+    /**
+     * Updates user password
+     *
+     * @param requestBody users password on body request
+     * @param id          identifications's user
+     * @throws UserNotFoundException
+     */
+    @PatchMapping("/{id}")
+    @ApiOperation(value = "Returns user updated")
+    @ApiResponses(value = {
+        @ApiResponse(code = 204, message = "Updates user correctly"),
+        @ApiResponse(code = 404, message = "User Not Found")
+    })
+    @ResponseStatus(HttpStatus.NO_CONTENT)
+    public void update(@RequestBody Map<String, Object> requestBody, @PathVariable long id)
+        throws UserNotFoundException {
+        User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
+        user.setPassword(passwordEncoder.encode(requestBody.get("password").toString()));
         userRepository.save(user);
     }
 

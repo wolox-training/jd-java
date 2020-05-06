@@ -45,7 +45,7 @@ public class BookController {
     @GetMapping
     @ApiOperation(value = "Return all books", response = Iterable.class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Return all books")})
-    public Iterable findAll() {
+    public Iterable<Book> findAll() {
         return bookRepository.findAll();
     }
 
