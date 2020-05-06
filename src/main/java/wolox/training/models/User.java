@@ -1,8 +1,10 @@
 package wolox.training.models;
 
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.time.LocalDate;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 import javax.persistence.CascadeType;
@@ -63,6 +65,7 @@ public class User {
      * User's birth date
      */
     @Column(nullable = false)
+    @JsonProperty("birth_date")
     private LocalDate birthDate;
 
     /**
@@ -77,41 +80,33 @@ public class User {
      * @return List of books that belongs to the user
      */
     public List<Book> getBooks() {
-        return (List<Book>) Collections.unmodifiableList(books);
+        if (books != null) {
+            return (List<Book>) Collections.unmodifiableList(books);
+        } else {
+            return new ArrayList<Book>();
+        }
     }
 
     /**
-     * Set user's book
+     * Add book to user's collection
      *
-     * @param books books list to set
+     * @param book book's model
      * @throws BookAlreadyOwnedException
      */
-    public void setBooks(List<Book> books) throws BookAlreadyOwnedException {
-        if (haveDuplicateBooks(books)) {
+    public void addBook(Book book) throws BookAlreadyOwnedException {
+        if (this.books.contains(book)) {
             throw new BookAlreadyOwnedException();
         }
 
-        this.books = books;
+        this.books.add(book);
     }
 
     /**
-     * Verify if books list have duplicates
+     * Remove book from user's collection
      *
-     * @param books books list
-     * @return boolean that indicates if the list have duplicates
+     * @param book book's model
      */
-    private boolean haveDuplicateBooks(List<Book> books) {
-        return countDuplicates(this.books, books) != 0 || countDuplicates(books, books) != 0;
-    }
-
-    /**
-     * Count duplicates in list from another list
-     *
-     * @param searchIn list to search in
-     * @param search   list to search
-     * @return integer duplicated count
-     */
-    private long countDuplicates(List<Book> searchIn, List<Book> search) {
-        return searchIn.stream().filter(book -> Collections.frequency(search, book) > 1).count();
+    public void removeBook(Book book) {
+        this.books.remove(book);
     }
 }

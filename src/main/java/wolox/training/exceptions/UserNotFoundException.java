@@ -4,12 +4,12 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * Book already owned to the user
+ * Exception when user is not found
  *
  * @author Jorge Díaz
  * @version 1.0.0
  */
-@ResponseStatus(code = HttpStatus.CONFLICT, reason = "Book already owned")
-public class BookAlreadyOwnedException extends Exception {
+@ResponseStatus(code = HttpStatus.NOT_FOUND, reason = "User Not Found")
+public class UserNotFoundException extends Exception {
 
 }
