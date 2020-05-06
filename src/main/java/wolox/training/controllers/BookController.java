@@ -43,9 +43,9 @@ public class BookController {
      * @return Iterable with all books
      */
     @GetMapping
-    @ApiOperation(value = "Return all books", response = Iterable.class)
+    @ApiOperation(value = "Return all books", response = Book[].class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Return all books")})
-    public Iterable findAll() {
+    public Iterable<Book> findAll() {
         return bookRepository.findAll();
     }
 
@@ -57,8 +57,9 @@ public class BookController {
      * @throws BookNotFoundException
      */
     @GetMapping("/{id}")
+    @ApiOperation(value = "Return book searched", response = Book.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Return all books"),
+        @ApiResponse(code = 200, message = "Return book"),
         @ApiResponse(code = 404, message = "Book Not Found")
     })
     public Book findOne(@PathVariable long id) throws BookNotFoundException {
@@ -90,7 +91,7 @@ public class BookController {
     @DeleteMapping("/{id}")
     @ApiOperation(value = "Deletes correctly")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Deletes correctly"),
+        @ApiResponse(code = 204, message = "Deletes correctly"),
         @ApiResponse(code = 404, message = "Book Not Found")
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -111,7 +112,7 @@ public class BookController {
     @PutMapping("/{id}")
     @ApiOperation(value = "Returns book updated")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Updates user correctly"),
+        @ApiResponse(code = 204, message = "Updates user correctly"),
         @ApiResponse(code = 400, message = "Book Id mismatch"),
         @ApiResponse(code = 404, message = "Book Not Found")
     })

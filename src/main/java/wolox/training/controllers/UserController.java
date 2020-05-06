@@ -47,9 +47,9 @@ public class UserController {
      * @return Iterable with all users
      */
     @GetMapping
-    @ApiOperation(value = "Return all users with books collection", response = Iterable.class)
+    @ApiOperation(value = "Return all users with books collection", response = User[].class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Return all users")})
-    public Iterable findAll() {
+    public Iterable<User> findAll() {
         return userRepository.findAll();
     }
 
@@ -95,7 +95,7 @@ public class UserController {
     @DeleteMapping("/{id}")
     @ApiOperation(value = "Deletes correctly")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Deletes correctly"),
+        @ApiResponse(code = 204, message = "Deletes correctly"),
         @ApiResponse(code = 404, message = "User Not Found")
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
@@ -116,7 +116,7 @@ public class UserController {
     @PutMapping("/{id}")
     @ApiOperation(value = "Returns user updated")
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Updates user correctly"),
+        @ApiResponse(code = 204, message = "Updates user correctly"),
         @ApiResponse(code = 400, message = "User Id mismatch"),
         @ApiResponse(code = 404, message = "User Not Found")
     })
