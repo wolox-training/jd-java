@@ -1,5 +1,8 @@
 package wolox.training.controllers;
 
+import io.swagger.annotations.ApiOperation;
+import io.swagger.annotations.ApiResponse;
+import io.swagger.annotations.ApiResponses;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
@@ -40,7 +43,9 @@ public class BookController {
      * @return Iterable with all books
      */
     @GetMapping
-    public Iterable findAll() {
+    @ApiOperation(value = "Return all books", response = Book[].class)
+    @ApiResponses(value = {@ApiResponse(code = 200, message = "Return all books")})
+    public Iterable<Book> findAll() {
         return bookRepository.findAll();
     }
 
@@ -52,6 +57,11 @@ public class BookController {
      * @throws BookNotFoundException
      */
     @GetMapping("/{id}")
+    @ApiOperation(value = "Return book searched", response = Book.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Return book"),
+        @ApiResponse(code = 404, message = "Book Not Found")
+    })
     public Book findOne(@PathVariable long id) throws BookNotFoundException {
         return bookRepository.findById(id).orElseThrow(BookNotFoundException::new);
     }
@@ -64,6 +74,10 @@ public class BookController {
      */
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
+    @ApiOperation(value = "Return book created", response = Book.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 201, message = "Return book created")
+    })
     public Book create(@RequestBody Book book) {
         return bookRepository.save(book);
     }
@@ -75,6 +89,11 @@ public class BookController {
      * @throws BookNotFoundException
      */
     @DeleteMapping("/{id}")
+    @ApiOperation(value = "Deletes correctly")
+    @ApiResponses(value = {
+        @ApiResponse(code = 204, message = "Deletes correctly"),
+        @ApiResponse(code = 404, message = "Book Not Found")
+    })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void delete(@PathVariable Long id) throws BookNotFoundException {
         bookRepository.findById(id)
@@ -91,9 +110,17 @@ public class BookController {
      * @throws BookNotFoundException
      */
     @PutMapping("/{id}")
+    @ApiOperation(value = "Returns book updated")
+    @ApiResponses(value = {
+        @ApiResponse(code = 204, message = "Updates user correctly"),
+        @ApiResponse(code = 400, message = "Book Id mismatch"),
+        @ApiResponse(code = 404, message = "Book Not Found")
+    })
     @ResponseStatus(HttpStatus.NO_CONTENT)
     public void update(@RequestBody Book book, @PathVariable long id)
-        throws BookIdMismatchException, BookNotFoundException {
+        throws BookIdMismatchException,
+
+                   BookNotFoundException {
         if (book.getId() != id) {
             throw new BookIdMismatchException();
         }
