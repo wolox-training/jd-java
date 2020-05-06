@@ -1,6 +1,6 @@
 package wolox.training.validators;
 
-import static wolox.training.config.annotations.NotNullConstraint.MESSAGE;
+import static wolox.training.annotations.NotNullConstraint.MESSAGE;
 
 import com.google.common.base.Preconditions;
 import javax.validation.ConstraintValidator;
