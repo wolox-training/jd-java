@@ -64,18 +64,9 @@ public class BookControllerTest {
     public void setup() throws JsonProcessingException {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
 
-        this.bookMap = new BookFactory().book();
-        this.book = new Book(
-            bookMap.get("author").toString(),
-            bookMap.get("image").toString(),
-            bookMap.get("title").toString(),
-            bookMap.get("subtitle").toString(),
-            bookMap.get("publisher").toString(),
-            bookMap.get("year").toString(),
-            Integer.parseInt(bookMap.get("pages").toString()),
-            bookMap.get("isbn").toString()
-        );
-
+        BookFactory bookFactory = new BookFactory();
+        this.bookMap = bookFactory.book();
+        this.book = bookFactory.bookModel(this.bookMap);
         this.bookList = new ArrayList<Book>(Arrays.asList(
             this.book
         ));
@@ -92,7 +83,7 @@ public class BookControllerTest {
     }
 
     @Test
-    public void whenGetOneBookAndFound_thenReturnJson() throws Exception {
+    public void whenGetOneBookAndFound_thenReturnJsonObject() throws Exception {
         given(this.bookRepository.findById(this.book.getId())).willReturn(Optional.of(this.book));
 
         this.mockMvc
@@ -103,7 +94,7 @@ public class BookControllerTest {
     }
 
     @Test
-    public void whenGetOneBookAndNotFound_thenReturnJsonError() throws Exception {
+    public void whenGetOneBookAndNotFound_thenReturnBookNotFoundException() throws Exception {
         given(this.bookRepository.findById(this.book.getId()))
             .willReturn(Optional.empty());
 
@@ -113,7 +104,7 @@ public class BookControllerTest {
     }
 
     @Test
-    public void whenSavesABook_thenReturnBookJson() throws Exception {
+    public void whenSavesABook_thenReturnBookJsonObject() throws Exception {
         given(this.bookRepository.save(this.book)).willReturn(this.book);
 
         this.mockMvc
@@ -126,7 +117,8 @@ public class BookControllerTest {
     }
 
     @Test(expected = NestedServletException.class)
-    public void whenSavesABookWithoutRequiredParams_thenReturnBookJson() throws Exception {
+    public void whenSavesABookWithoutRequiredParams_thenReturnNullPointerException()
+        throws Exception {
         when(this.bookRepository.save(this.book)).thenThrow(NullPointerException.class);
 
         this.mockMvc
@@ -134,12 +126,12 @@ public class BookControllerTest {
                          .contentType(MediaType.APPLICATION_JSON)
                          .characterEncoding("utf-8")
                          .content(this.objectMapper.writeValueAsString(this.bookMap)))
-            .andExpect(status().is5xxServerError())
+            .andExpect(status().is4xxClientError())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
-    public void whenDeletesABook_thenReturnNoContent() throws Exception {
+    public void whenDeletesABook_thenReturnNoContentHttpStatus() throws Exception {
         given(this.bookRepository.findById(this.book.getId())).willReturn(Optional.of(this.book));
 
         this.mockMvc
@@ -148,7 +140,7 @@ public class BookControllerTest {
     }
 
     @Test
-    public void whenDeletesABookAndNotFound_thenReturnJsonError() throws Exception {
+    public void whenDeletesABookAndNotFound_thenReturnBookNotFoundException() throws Exception {
         given(this.bookRepository.findById(this.book.getId()))
             .willReturn(Optional.empty());
 
@@ -158,7 +150,7 @@ public class BookControllerTest {
     }
 
     @Test
-    public void whenUpdatesABook_thenReturnBookJson() throws Exception {
+    public void whenUpdatesABook_thenReturnBookJsonObject() throws Exception {
         given(this.bookRepository.findById(this.book.getId())).willReturn(Optional.of(this.book));
         given(this.bookRepository.save(this.book)).willReturn(this.book);
 
@@ -171,7 +163,8 @@ public class BookControllerTest {
     }
 
     @Test
-    public void whenUpdatesABookButBookIdMismatch_thenReturnJsonError() throws Exception {
+    public void whenUpdatesABookButBookIdMismatch_thenReturnBookIdMismatchException()
+        throws Exception {
         this.mockMvc
             .perform(put("/api/books/9999")
                          .contentType(MediaType.APPLICATION_JSON)
@@ -181,7 +174,7 @@ public class BookControllerTest {
     }
 
     @Test
-    public void whenUpdateABookAndNotFound_thenReturnJsonError() throws Exception {
+    public void whenUpdateABookAndNotFound_thenReturnBookNotFoundException() throws Exception {
         given(this.bookRepository.findById(this.book.getId()))
             .willReturn(Optional.empty());
 

@@ -5,6 +5,7 @@ import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
+import wolox.training.models.User;
 
 public class UserFactory {
 
@@ -23,5 +24,14 @@ public class UserFactory {
         return faker.date().past(faker.random().nextInt(0, 1000), TimeUnit.DAYS)
                    .toInstant()
                    .atZone(ZoneId.systemDefault()).toLocalDate();
+    }
+
+    public User userModel(HashMap<String, Object> userMap) {
+        return new User(
+            userMap.get("username").toString(),
+            userMap.get("name").toString(),
+            LocalDate.parse(userMap.get("birth_date").toString()),
+            userMap.get("password").toString()
+        );
     }
 }
