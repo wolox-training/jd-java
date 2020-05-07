@@ -24,10 +24,8 @@ import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import lombok.AccessLevel;
 import lombok.Data;
-import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import wolox.training.exceptions.BookAlreadyOwnedException;
 
 /**

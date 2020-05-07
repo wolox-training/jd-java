@@ -68,32 +68,20 @@ public class UserControllerTest {
     private HashMap<String, Object> bookMap;
 
     @Before
-    public void setup() throws JsonProcessingException {
+    public void setup() {
         this.mockMvc = MockMvcBuilders.webAppContextSetup(this.webApplicationContext).build();
 
-        this.userMap = new UserFactory().user();
-        this.user = new User(
-            this.userMap.get("username").toString(),
-            this.userMap.get("name").toString(),
-            LocalDate.parse(this.userMap.get("birth_date").toString())
-        );
+        UserFactory userFactory = new UserFactory();
+        this.userMap = userFactory.user();
+        this.user = userFactory.userModel(this.userMap);
         this.user.setBooks(new ArrayList<>());
-
-        this.bookMap = new BookFactory().book();
-        this.book = new Book(
-            bookMap.get("author").toString(),
-            bookMap.get("image").toString(),
-            bookMap.get("title").toString(),
-            bookMap.get("subtitle").toString(),
-            bookMap.get("publisher").toString(),
-            bookMap.get("year").toString(),
-            Integer.parseInt(bookMap.get("pages").toString()),
-            bookMap.get("isbn").toString()
-        );
-
         this.userList = new ArrayList<User>(Arrays.asList(
             this.user
         ));
+
+        BookFactory bookFactory = new BookFactory();
+        this.bookMap = bookFactory.book();
+        this.book = bookFactory.bookModel(this.bookMap);
     }
 
     @Test
@@ -111,7 +99,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void whenGetOneUserAndFound_thenReturnJson() throws Exception {
+    public void whenGetOneUserAndFound_thenReturnJsonObject() throws Exception {
         given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
 
         this.mockMvc
@@ -126,7 +114,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void whenGetOneUserAndNotFound_thenReturnJsonError() throws Exception {
+    public void whenGetOneUserAndNotFound_thenReturnNotFoundUserException() throws Exception {
         given(this.userRepository.findById(this.user.getId()))
             .willReturn(Optional.empty());
 
@@ -136,7 +124,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void whenSavesAUser_thenReturnUserJson() throws Exception {
+    public void whenSavesAUser_thenReturnUserJsonObject() throws Exception {
         given(this.userRepository.save(this.user)).willReturn(this.user);
 
         this.mockMvc
@@ -149,7 +137,8 @@ public class UserControllerTest {
     }
 
     @Test(expected = NestedServletException.class)
-    public void whenSavesAUserWithoutRequiredParams_thenReturnUserJson() throws Exception {
+    public void whenSavesAUserWithoutRequiredParams_thenReturnNullPointerException()
+        throws Exception {
         when(this.userRepository.save(this.user)).thenThrow(NullPointerException.class);
 
         this.mockMvc
@@ -157,12 +146,12 @@ public class UserControllerTest {
                          .contentType(MediaType.APPLICATION_JSON)
                          .characterEncoding("utf-8")
                          .content(this.objectMapper.writeValueAsString(this.userMap)))
-            .andExpect(status().is5xxServerError())
+            .andExpect(status().is4xxClientError())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON));
     }
 
     @Test
-    public void whenDeletesAUser_thenReturnNoContent() throws Exception {
+    public void whenDeletesAUser_thenReturnNoContentHttpStatus() throws Exception {
         given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
 
         this.mockMvc
@@ -171,7 +160,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void whenDeletesAUserAndNotFound_thenReturnJsonError() throws Exception {
+    public void whenDeletesAUserAndNotFound_thenReturnUserNotFoundException() throws Exception {
         given(this.userRepository.findById(this.user.getId()))
             .willReturn(Optional.empty());
 
@@ -181,7 +170,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void whenUpdatesAUser_thenReturnUserJson() throws Exception {
+    public void whenUpdatesAUser_thenReturnUserJsonObject() throws Exception {
         given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
         given(this.userRepository.save(this.user)).willReturn(this.user);
 
@@ -194,7 +183,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void whenUpdatesAUserButUserIdMismatch_thenReturnJsonError() throws Exception {
+    public void whenUpdatesAUserButUserIdMismatch_thenReturnUserIdMismatchException()
+        throws Exception {
         this.mockMvc
             .perform(put("/api/users/9999")
                          .contentType(MediaType.APPLICATION_JSON)
@@ -204,7 +194,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void whenUpdateAUserAndNotFound_thenReturnJsonError() throws Exception {
+    public void whenUpdateAUserAndNotFound_thenReturnUserNotFoundException() throws Exception {
         given(this.userRepository.findById(this.user.getId()))
             .willReturn(Optional.empty());
 
@@ -217,7 +207,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void whenAddBook_thenReturnJson() throws Exception {
+    public void whenAddBook_thenReturnUserJsonObject() throws Exception {
         given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
         given(this.bookRepository.findById(this.book.getId())).willReturn(Optional.of(this.book));
         given(this.userRepository.save(this.user)).willReturn(this.user);
@@ -230,7 +220,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void whenAddBookButUserNotFound_thenReturnJsonError() throws Exception {
+    public void whenAddBookButUserNotFound_thenReturnUserNotFoundException() throws Exception {
         given(this.userRepository.findById(this.user.getId()))
             .willReturn(Optional.empty());
 
@@ -241,7 +231,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void whenAddBookButBookNotFound_thenReturnJsonError() throws Exception {
+    public void whenAddBookButBookNotFound_thenReturnBookNotFoundException() throws Exception {
         given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
         given(this.bookRepository.findById(this.book.getId())).willReturn(Optional.empty());
 
@@ -252,7 +242,8 @@ public class UserControllerTest {
     }
 
     @Test
-    public void whenAddBookButBookAlreadyOwned_thenReturnJsonError() throws Exception {
+    public void whenAddBookButBookAlreadyOwned_thenReturnBookAlreadyOwnedException()
+        throws Exception {
         this.user.addBook(this.book);
         given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
         given(this.bookRepository.findById(this.book.getId())).willReturn(Optional.of(this.book));
@@ -264,7 +255,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void whenRemoveABook_thenReturnJson() throws Exception {
+    public void whenRemoveABook_thenReturnUserJsonObject() throws Exception {
         given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
         given(this.bookRepository.findById(this.book.getId())).willReturn(Optional.of(this.book));
         given(this.userRepository.save(this.user)).willReturn(this.user);
@@ -277,7 +268,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void whenRemoveABookButUserNotFound_thenReturnJsonError() throws Exception {
+    public void whenRemoveABookButUserNotFound_thenReturnUserNotFoundException() throws Exception {
         given(this.userRepository.findById(this.user.getId()))
             .willReturn(Optional.empty());
 
@@ -288,7 +279,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void whenRemoveABookButBookNotFound_thenReturnJsonError() throws Exception {
+    public void whenRemoveABookButBookNotFound_thenReturnBookNotFoundException() throws Exception {
         given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
         given(this.bookRepository.findById(this.book.getId())).willReturn(Optional.empty());
 
