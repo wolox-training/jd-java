@@ -3,6 +3,10 @@ package wolox.training.controllers;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.io.IOException;
+import java.net.URISyntaxException;
+import java.text.ParseException;
+import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
@@ -19,7 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 import wolox.training.exceptions.BookIdMismatchException;
 import wolox.training.exceptions.BookNotFoundException;
 import wolox.training.models.Book;
+import wolox.training.pojos.dtos.BookDTO;
 import wolox.training.repositories.BookRepository;
+import wolox.training.services.OpenLibraryService;
 
 /**
  * Entry point to books routes
@@ -140,6 +146,29 @@ public class BookController {
         Model model) {
         model.addAttribute("name", name);
         return "greeting";
+    }
+
+    /**
+     * Search a book by isbn
+     *
+     * @return Book
+     */
+    @GetMapping("/search")
+    @ApiOperation(value = "Return Book", response = Book.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Return all books"),
+        @ApiResponse(code = 404, message = "Book Not Found")
+    })
+    public Book search(@RequestParam(name = "isbn") String isbn)
+        throws InterruptedException, IOException, URISyntaxException, BookNotFoundException, ParseException {
+        Optional<Book> book = bookRepository.findFirstByIsbn(isbn);
+
+        if (book.isPresent()) {
+            return book.get();
+        } else {
+            return bookRepository
+                       .save(((new OpenLibraryService()).bookInformation(isbn)).convertToEntity());
+        }
     }
 
 }
