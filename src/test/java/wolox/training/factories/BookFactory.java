@@ -6,6 +6,7 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.TimeZone;
 import java.util.concurrent.TimeUnit;
+import wolox.training.models.Book;
 
 public class BookFactory {
 
@@ -29,5 +30,18 @@ public class BookFactory {
         Calendar calendar = Calendar.getInstance(TimeZone.getTimeZone("America/Bogota"));
         calendar.setTime(date);
         return calendar.get(Calendar.YEAR);
+    }
+
+    public Book bookModel(HashMap<String, Object> bookMap) {
+        return new Book(
+            bookMap.get("author").toString(),
+            bookMap.get("image").toString(),
+            bookMap.get("title").toString(),
+            bookMap.get("subtitle").toString(),
+            bookMap.get("publisher").toString(),
+            bookMap.get("year").toString(),
+            Integer.parseInt(bookMap.get("pages").toString()),
+            bookMap.get("isbn").toString()
+        );
     }
 }
