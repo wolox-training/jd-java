@@ -18,10 +18,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 import lombok.AccessLevel;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 
 /**
  * Book model is using to save books data
@@ -31,10 +30,8 @@ import lombok.ToString;
  */
 @Entity
 @Table(name = "books")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@ToString
 @JsonIdentityInfo(
     generator = ObjectIdGenerators.PropertyGenerator.class,
     property = "id")
@@ -124,6 +121,18 @@ public class Book {
      */
     @ManyToMany(mappedBy = "books", fetch = FetchType.LAZY)
     private List<User> users;
+
+    public Book(String author, String image, String title, String subtitle, String publisher,
+        String year, int pages, String isbn) {
+        this.author = author;
+        this.image = image;
+        this.title = title;
+        this.subtitle = subtitle;
+        this.publisher = publisher;
+        this.year = year;
+        this.pages = pages;
+        this.isbn = isbn;
+    }
 
     /**
      * Set genre of a book

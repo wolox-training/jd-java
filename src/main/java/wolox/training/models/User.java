@@ -23,10 +23,9 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Past;
 import lombok.AccessLevel;
-import lombok.Getter;
+import lombok.Data;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
-import lombok.ToString;
 import wolox.training.exceptions.BookAlreadyOwnedException;
 
 /**
@@ -37,10 +36,8 @@ import wolox.training.exceptions.BookAlreadyOwnedException;
  */
 @Entity
 @Table(name = "users")
-@Getter
-@Setter
+@Data
 @NoArgsConstructor
-@ToString
 @JsonIdentityInfo(
     generator = ObjectIdGenerators.PropertyGenerator.class,
     property = "id")
@@ -84,6 +81,12 @@ public class User {
      */
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private List<Book> books;
+
+    public User(String username, String name, LocalDate birthDate) {
+        this.username = username;
+        this.name = name;
+        this.birthDate = birthDate;
+    }
 
     /**
      * Set username of the user
