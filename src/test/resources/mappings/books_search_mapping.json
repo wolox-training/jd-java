@@ -1,11 +1,10 @@
 {
-  "id": "6d3607a3-00fa-408f-afaa-3b293fecbeb8",
   "request": {
     "urlPath": "/api/books",
     "method": "GET",
     "queryParameters": {
       "bibkeys": {
-        "equalTo": "ISBN:0000000009"
+        "equalTo": "ISBN:0451526538"
       },
       "format": {
         "equalTo": "json"
@@ -17,12 +16,10 @@
   },
   "response": {
     "status": 200,
-    "bodyFileName": "books_search_not_found_response.json",
+    "bodyFileName": "books_search_response.json",
     "headers": {
       "Content-Type": "application/json"
     },
     "fixedDelayMilliseconds": 2000
-  },
-  "uuid": "6d3607a3-00fa-408f-afaa-3b293fecbeb8",
-  "priority": 10
+  }
 }
