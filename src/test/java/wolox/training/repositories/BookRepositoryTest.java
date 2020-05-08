@@ -94,4 +94,31 @@ public class BookRepositoryTest {
         assertThat(bookFound.orElse(null)).isNull();
     }
 
+    @Test
+    public void whenSearchABookByPublisherAndYearAndGenre_thenBookShouldFound() {
+        Book[] booksFound = this.bookRepository
+                                .findByPublisherAndYearAndGenre(this.book.getPublisher(),
+                                    this.book.getYear(), this.book.getGenre());
+
+        assertThat(booksFound[0].getId()).isNotNull();
+        assertThat(booksFound[0].getAuthor()).isEqualTo(this.book.getAuthor());
+        assertThat(booksFound[0].getImage()).isEqualTo(this.book.getImage());
+        assertThat(booksFound[0].getTitle()).isEqualTo(this.book.getTitle());
+        assertThat(booksFound[0].getSubtitle()).isEqualTo(this.book.getSubtitle());
+        assertThat(booksFound[0].getPublisher()).isEqualTo(this.book.getPublisher());
+        assertThat(booksFound[0].getYear()).isEqualTo(this.book.getYear());
+        assertThat(booksFound[0].getPages()).isEqualTo(this.book.getPages());
+        assertThat(booksFound[0].getIsbn()).isEqualTo(this.book.getIsbn());
+    }
+
+    @Test
+    public void whenSearchABookByPublisherAndYearAndGenre_thenBookNotFound() {
+        Optional<Book> bookFound = this.bookRepository.findFirstByIsbn(faker.book().author());
+        Book[] booksFound = this.bookRepository
+                                .findByPublisherAndYearAndGenre(faker.book().author(),
+                                    "1234", faker.book().author());
+
+        assertThat(booksFound.length).isEqualTo(0);
+    }
+
 }

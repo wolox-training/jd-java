@@ -28,4 +28,14 @@ public interface BookRepository extends CrudRepository<Book, Long> {
      */
     Optional<Book> findFirstByIsbn(String isbn);
 
+    /**
+     * Find a book by publisher, year and genre
+     *
+     * @param publisher book's publisher
+     * @param year      book's year
+     * @param genre     book's genre
+     * @return Book[]
+     */
+    Book[] findByPublisherAndYearAndGenre(String publisher, String year, String genre);
+
 }
