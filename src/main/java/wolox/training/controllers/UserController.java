@@ -7,6 +7,7 @@ import io.swagger.annotations.ApiResponses;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.core.Authentication;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -220,4 +221,22 @@ public class UserController {
         return userRepository.save(user);
     }
 
+    /**
+     * Get current user
+     *
+     * @return User
+     */
+    @GetMapping("/current")
+    @ApiOperation(value = "Return current user", response = User.class)
+    @ApiResponses(value = {
+        @ApiResponse(code = 200, message = "Return current user"),
+        @ApiResponse(code = 404, message = "User Not Found")
+    })
+    public User currentUser(Authentication authentication) throws UserNotFoundException {
+        User user =
+            userRepository.findFirstByUsername(authentication.getPrincipal().toString())
+                .orElseThrow(UserNotFoundException::new);
+
+        return user;
+    }
 }
