@@ -8,6 +8,7 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
@@ -23,7 +24,6 @@ import org.springframework.web.bind.annotation.RestController;
 import wolox.training.exceptions.BookIdMismatchException;
 import wolox.training.exceptions.BookNotFoundException;
 import wolox.training.models.Book;
-import wolox.training.pojos.dtos.BookDTO;
 import wolox.training.repositories.BookRepository;
 import wolox.training.services.OpenLibraryService;
 
@@ -42,6 +42,9 @@ public class BookController {
      */
     @Autowired
     private BookRepository bookRepository;
+
+    @Autowired
+    private OpenLibraryService openLibraryService;
 
     /**
      * Get all books
@@ -167,7 +170,7 @@ public class BookController {
             return book.get();
         } else {
             return bookRepository
-                       .save(((new OpenLibraryService()).bookInformation(isbn)).convertToEntity());
+                       .save((this.openLibraryService.bookInformation(isbn)).convertToEntity());
         }
     }
 

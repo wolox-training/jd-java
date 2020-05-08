@@ -8,26 +8,25 @@ import java.net.http.HttpClient;
 import java.net.http.HttpRequest;
 import java.net.http.HttpResponse;
 import java.net.http.HttpResponse.BodyHandlers;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.core.env.Environment;
+import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 import wolox.training.exceptions.BookNotFoundException;
 import wolox.training.helpers.Json;
 import wolox.training.services.dtos.BookDTO;
 
+@Service("openLibraryService")
 public class OpenLibraryService {
 
-    private HttpClient httpClient;
+    @Autowired
+    @Qualifier("environment")
+    private Environment environment;
 
-    private HttpRequest httpRequest;
-
-    private static final String OPEN_LIBRARY_URI = "https://openlibrary.org/api/books";
+    private static final String OPEN_LIBRARY_PATH = "/api/books";
 
     private static final String OPEN_LIBRARY_PARAMS = "?bibkeys=ISBN:%s&format=json&jscmd=data";
-
-    private String url;
-
-    public OpenLibraryService() {
-        this.httpClient = HttpClient.newHttpClient();
-        this.url = OPEN_LIBRARY_URI + OPEN_LIBRARY_PARAMS;
-    }
 
     public wolox.training.pojos.dtos.BookDTO bookInformation(String isbn)
         throws InterruptedException, IOException, URISyntaxException, BookNotFoundException {
@@ -43,11 +42,17 @@ public class OpenLibraryService {
 
     private HttpResponse<String> makeRequest(String isbn)
         throws URISyntaxException, IOException, InterruptedException {
-        this.httpRequest = HttpRequest.newBuilder()
-                               .uri(new URI(String.format(this.url, isbn)))
-                               .build();
+        HttpClient httpClient = HttpClient.newHttpClient();
+        HttpRequest httpRequest = HttpRequest.newBuilder()
+                                      .uri(new URI(String.format(this.buildUrl(), isbn)))
+                                      .build();
 
-        return this.httpClient.send(this.httpRequest, BodyHandlers.ofString());
+        return httpClient.send(httpRequest, BodyHandlers.ofString());
+    }
+
+    private String buildUrl() {
+        return this.environment.getProperty("app.open-library-url") + OPEN_LIBRARY_PATH
+                   + OPEN_LIBRARY_PARAMS;
     }
 
 }
