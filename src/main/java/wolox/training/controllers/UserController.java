@@ -4,10 +4,12 @@ import io.swagger.annotations.Api;
 import io.swagger.annotations.ApiOperation;
 import io.swagger.annotations.ApiResponse;
 import io.swagger.annotations.ApiResponses;
+import java.security.Principal;
 import java.util.Map;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -232,9 +234,11 @@ public class UserController {
         @ApiResponse(code = 200, message = "Return current user"),
         @ApiResponse(code = 404, message = "User Not Found")
     })
-    public User currentUser(Authentication authentication) throws UserNotFoundException {
+    public User currentUser() throws UserNotFoundException {
+        String username = SecurityContextHolder.getContext().getAuthentication().getPrincipal()
+                              .toString();
         User user =
-            userRepository.findFirstByUsername(authentication.getPrincipal().toString())
+            userRepository.findFirstByUsername(username)
                 .orElseThrow(UserNotFoundException::new);
 
         return user;
