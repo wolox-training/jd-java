@@ -39,6 +39,7 @@ dependencies {
     compile 'org.springframework.plugin:spring-plugin-core:1.2.0.RELEASE'
     compile group: 'com.google.guava', name: 'guava', version: '27.0-jre'
     compile group: 'org.modelmapper', name: 'modelmapper', version: '2.3.7'
+    testCompile "com.github.tomakehurst:wiremock-jre8:2.26.3"
 }
 
 test {

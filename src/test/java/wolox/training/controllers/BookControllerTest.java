@@ -1,5 +1,11 @@
 package wolox.training.controllers;
 
+import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
+import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.matching;
+import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
+import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -12,6 +18,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.github.tomakehurst.wiremock.client.WireMock;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -21,6 +28,7 @@ import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
+import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -34,7 +42,9 @@ import wolox.training.config.SecurityConfigTest;
 import wolox.training.factories.BookFactory;
 import wolox.training.models.Book;
 import wolox.training.repositories.BookRepository;
+import wolox.training.services.OpenLibraryService;
 
+//@SpringBootTest
 @RunWith(SpringRunner.class)
 @WebMvcTest(BookController.class)
 @ContextConfiguration(classes = {SecurityConfigTest.class, BookController.class})
@@ -48,6 +58,9 @@ public class BookControllerTest {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private OpenLibraryService openLibraryService;
 
     @MockBean
     private BookRepository bookRepository;
@@ -71,6 +84,7 @@ public class BookControllerTest {
             this.book
         ));
     }
+
 
     @Test
     public void whenGetAllBooks_thenReturnJsonArray() throws Exception {
@@ -183,6 +197,40 @@ public class BookControllerTest {
                          .contentType(MediaType.APPLICATION_JSON)
                          .characterEncoding("utf-8")
                          .content(this.objectMapper.writeValueAsString(this.bookMap)))
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void whenSearchABookByISBNAndFoundAtDataBase_thenReturnJSONObject()
+        throws Exception {
+        this.book.setIsbn("test");
+
+        given(this.bookRepository.findFirstByIsbn(this.book.getIsbn()))
+            .willReturn(Optional.of(this.book));
+
+        this.mockMvc
+            .perform(get("/api/books/search?isbn=" + this.book.getIsbn()))
+            .andDo(print())
+            .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    public void whenSearchABookByISBNAndFoundAtExternalService_thenReturnJSONObject()
+        throws Exception {
+        given(this.bookRepository.findFirstByIsbn("0451526538")).willReturn(Optional.empty());
+
+        this.mockMvc
+            .perform(get("/api/books/search?isbn=0451526538"))
+            .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    public void whenSearchABookByISBNAndNotFound_thenReturnBookNotFoundException()
+        throws Exception {
+        given(this.bookRepository.findFirstByIsbn("0000000009")).willReturn(Optional.empty());
+
+        this.mockMvc
+            .perform(get("/api/books/search?isbn=0000000009"))
             .andExpect(status().is4xxClientError());
     }
 }

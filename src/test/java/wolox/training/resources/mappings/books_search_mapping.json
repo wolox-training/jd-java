@@ -17,7 +17,10 @@
   },
   "response": {
     "status": 200,
-    "body": "Hola mundo",
+    "bodyFileName": "books_search_response.json",
+    "headers": {
+      "Content-Type": "application/json"
+    },
     "fixedDelayMilliseconds": 2000
   },
   "uuid": "6d3607a3-00fa-408f-afaa-3b293fecbeb8",

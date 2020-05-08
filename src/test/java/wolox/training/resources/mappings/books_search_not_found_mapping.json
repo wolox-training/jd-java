@@ -5,7 +5,7 @@
     "method": "GET",
     "queryParameters": {
       "bibkeys": {
-        "equalTo": "ISBN:0451526538"
+        "equalTo": "ISBN:0000000009"
       },
       "format": {
         "equalTo": "json"
@@ -17,7 +17,7 @@
   },
   "response": {
     "status": 200,
-    "bodyFileName": "books_search_response.json",
+    "bodyFileName": "books_search_not_found_response.json",
     "headers": {
       "Content-Type": "application/json"
     },
