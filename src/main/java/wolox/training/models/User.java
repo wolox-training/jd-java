@@ -1,9 +1,13 @@
 package wolox.training.models;
 
+import static com.google.common.base.Preconditions.checkArgument;
+import static com.google.common.base.Preconditions.checkNotNull;
+
 import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 import java.time.LocalDate;
+import java.time.chrono.ChronoLocalDate;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
@@ -13,10 +17,11 @@ import javax.persistence.Entity;
 import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.JoinColumn;
-import javax.persistence.JoinTable;
 import javax.persistence.ManyToMany;
 import javax.persistence.Table;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Past;
 import lombok.AccessLevel;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
@@ -53,18 +58,24 @@ public class User {
      * Identification's name
      */
     @Column(nullable = false, unique = true)
+    @NotNull
+    @NotEmpty
     private String username;
 
     /**
      * User's name
      */
     @Column(nullable = false)
+    @NotNull
+    @NotEmpty
     private String name;
 
     /**
      * User's birth date
      */
     @Column(nullable = false)
+    @NotNull
+    @Past
     @JsonProperty("birth_date")
     private LocalDate birthDate;
 
@@ -73,6 +84,37 @@ public class User {
      */
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private List<Book> books;
+
+    /**
+     * Set username of the user
+     *
+     * @param username
+     */
+    public void setUsername(String username) {
+        checkNotNull(username);
+        this.username = username;
+    }
+
+    /**
+     * Set name of the user
+     *
+     * @param name
+     */
+    public void setName(String name) {
+        checkNotNull(name);
+        this.name = name;
+    }
+
+    /**
+     * Set birth date of the user
+     *
+     * @param birthDate
+     */
+    public void setBirthDate(LocalDate birthDate) {
+        checkNotNull(birthDate);
+        checkArgument(birthDate.isBefore(ChronoLocalDate.from(LocalDate.now())));
+        this.birthDate = birthDate;
+    }
 
     /**
      * Get user's books
