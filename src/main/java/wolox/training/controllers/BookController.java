@@ -10,6 +10,7 @@ import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -159,18 +160,22 @@ public class BookController {
     @GetMapping("/search")
     @ApiOperation(value = "Return Book", response = Book.class)
     @ApiResponses(value = {
-        @ApiResponse(code = 200, message = "Return all books"),
+        @ApiResponse(code = 200, message = "Book Found"),
+        @ApiResponse(code = 201, message = "Book Found in external service and created"),
         @ApiResponse(code = 404, message = "Book Not Found")
     })
-    public Book search(@RequestParam(name = "isbn") String isbn)
+    public ResponseEntity<Book> search(@RequestParam(name = "isbn") String isbn)
         throws InterruptedException, IOException, URISyntaxException, BookNotFoundException, ParseException {
         Optional<Book> book = bookRepository.findFirstByIsbn(isbn);
 
         if (book.isPresent()) {
-            return book.get();
+            return new ResponseEntity<>(book.get(), HttpStatus.OK);
         } else {
-            return bookRepository
-                       .save((this.openLibraryService.bookInformation(isbn)).convertToEntity());
+            return new ResponseEntity<>(
+                bookRepository
+                    .save((this.openLibraryService.bookInformation(isbn))
+                              .convertToEntity()),
+                HttpStatus.CREATED);
         }
     }
 
