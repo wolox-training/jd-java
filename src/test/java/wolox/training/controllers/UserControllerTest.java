@@ -8,7 +8,6 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -340,7 +339,6 @@ public class UserControllerTest {
             .willReturn(Optional.of(this.user));
 
         this.mockMvc.perform(get("/api/users/current"))
-            .andDo(print())
             .andExpect(status().is2xxSuccessful());
     }
 
@@ -352,7 +350,6 @@ public class UserControllerTest {
             .willReturn(Optional.empty());
 
         this.mockMvc.perform(get("/api/users/current"))
-            .andDo(print())
             .andExpect(status().is4xxClientError());
     }
 }
