@@ -1,11 +1,5 @@
 package wolox.training.controllers;
 
-import static com.github.tomakehurst.wiremock.client.WireMock.aResponse;
-import static com.github.tomakehurst.wiremock.client.WireMock.equalTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.matching;
-import static com.github.tomakehurst.wiremock.client.WireMock.stubFor;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlEqualTo;
-import static com.github.tomakehurst.wiremock.client.WireMock.urlPathEqualTo;
 import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
@@ -18,17 +12,15 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.tomakehurst.wiremock.client.WireMock;
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
-import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
 import org.springframework.security.core.userdetails.UserDetailsService;
@@ -44,7 +36,6 @@ import wolox.training.models.Book;
 import wolox.training.repositories.BookRepository;
 import wolox.training.services.OpenLibraryService;
 
-//@SpringBootTest
 @RunWith(SpringRunner.class)
 @WebMvcTest(BookController.class)
 @ContextConfiguration(classes = {SecurityConfigTest.class, BookController.class})
@@ -67,7 +58,7 @@ public class BookControllerTest {
 
     private Book book;
 
-    private ArrayList<Book> bookList;
+    private Book[] bookList;
 
     private HashMap<String, Object> bookMap;
 
@@ -80,17 +71,137 @@ public class BookControllerTest {
         BookFactory bookFactory = new BookFactory();
         this.bookMap = bookFactory.book();
         this.book = bookFactory.bookModel(this.bookMap);
-        this.bookList = new ArrayList<Book>(Arrays.asList(
+        this.bookList = new Book[1];
+        Arrays.fill(
+            this.bookList,
             this.book
-        ));
+        );
     }
 
 
     @Test
     public void whenGetAllBooks_thenReturnJsonArray() throws Exception {
-        given(this.bookRepository.findAll()).willReturn(this.bookList);
+        given(this.bookRepository
+                  .findByAllParameters(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                      Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+            .willReturn(this.bookList);
 
         this.mockMvc.perform(get("/api/books").contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(this.objectMapper.writeValueAsString(this.bookList)));
+    }
+
+    @Test
+    public void whenGetAllBooksFilterById_thenReturnJsonArray() throws Exception {
+        given(this.bookRepository
+                  .findByAllParameters(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                      Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+            .willReturn(this.bookList);
+
+        this.mockMvc.perform(
+            get("/api/books?id=" + this.book.getId()).contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(this.objectMapper.writeValueAsString(this.bookList)));
+    }
+
+    @Test
+    public void whenGetAllBooksFilterByGenre_thenReturnJsonArray() throws Exception {
+        given(this.bookRepository
+                  .findByAllParameters(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                      Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+            .willReturn(this.bookList);
+
+        this.mockMvc.perform(
+            get("/api/books?genre=" + this.book.getGenre()).contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(this.objectMapper.writeValueAsString(this.bookList)));
+    }
+
+    @Test
+    public void whenGetAllBooksFilterByAuthor_thenReturnJsonArray() throws Exception {
+        given(this.bookRepository
+                  .findByAllParameters(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                      Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+            .willReturn(this.bookList);
+
+        this.mockMvc.perform(
+            get("/api/books?author=" + this.book.getAuthor())
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(this.objectMapper.writeValueAsString(this.bookList)));
+    }
+
+    @Test
+    public void whenGetAllBooksFilterByTitle_thenReturnJsonArray() throws Exception {
+        given(this.bookRepository
+                  .findByAllParameters(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                      Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+            .willReturn(this.bookList);
+
+        this.mockMvc.perform(
+            get("/api/books?title=" + this.book.getTitle()).contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(this.objectMapper.writeValueAsString(this.bookList)));
+    }
+
+    @Test
+    public void whenGetAllBooksFilterBySubtitle_thenReturnJsonArray() throws Exception {
+        given(this.bookRepository
+                  .findByAllParameters(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                      Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+            .willReturn(this.bookList);
+
+        this.mockMvc.perform(
+            get("/api/books?subtitle=" + this.book.getSubtitle())
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(this.objectMapper.writeValueAsString(this.bookList)));
+    }
+
+    @Test
+    public void whenGetAllBooksFilterByPublisher_thenReturnJsonArray() throws Exception {
+        given(this.bookRepository
+                  .findByAllParameters(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                      Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+            .willReturn(this.bookList);
+
+        this.mockMvc.perform(
+            get("/api/books?publisher=" + this.book.getPublisher())
+                .contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(this.objectMapper.writeValueAsString(this.bookList)));
+    }
+
+    @Test
+    public void whenGetAllBooksFilterByYear_thenReturnJsonArray() throws Exception {
+        given(this.bookRepository
+                  .findByAllParameters(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                      Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+            .willReturn(this.bookList);
+
+        this.mockMvc.perform(
+            get("/api/books?year=" + this.book.getYear()).contentType(MediaType.APPLICATION_JSON))
+            .andExpect(status().isOk())
+            .andExpect(content().contentType(MediaType.APPLICATION_JSON))
+            .andExpect(content().json(this.objectMapper.writeValueAsString(this.bookList)));
+    }
+
+    @Test
+    public void whenGetAllBooksFilterByIsbn_thenReturnJsonArray() throws Exception {
+        given(this.bookRepository
+                  .findByAllParameters(Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any(),
+                      Mockito.any(), Mockito.any(), Mockito.any(), Mockito.any()))
+            .willReturn(this.bookList);
+
+        this.mockMvc.perform(
+            get("/api/books?isbn=" + this.book.getIsbn()).contentType(MediaType.APPLICATION_JSON))
             .andExpect(status().isOk())
             .andExpect(content().contentType(MediaType.APPLICATION_JSON))
             .andExpect(content().json(this.objectMapper.writeValueAsString(this.bookList)));
