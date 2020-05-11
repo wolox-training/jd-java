@@ -34,7 +34,9 @@ public interface UserRepository extends CrudRepository<User, Long> {
     /**
      * Find users with birth date between two dates and name contains certain characteres
      *
-     * @param startDate @param endDate
+     * @param startDate @param startDate
+     * @param endDate   @param endDate
+     * @param name      @param name
      * @return User[]
      */
     @Query(value =
