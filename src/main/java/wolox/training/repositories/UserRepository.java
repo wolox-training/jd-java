@@ -2,7 +2,9 @@ package wolox.training.repositories;
 
 import java.time.LocalDate;
 import java.util.Optional;
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
+import org.springframework.data.repository.query.Param;
 import wolox.training.models.User;
 
 /**
@@ -32,11 +34,15 @@ public interface UserRepository extends CrudRepository<User, Long> {
     /**
      * Find users with birth date between two dates and name contains certain characteres
      *
-     * @param startDate
-     * @param endDate
-     * @param name
+     * @param startDate @param endDate
      * @return User[]
      */
-    User[] findByBirthDateBetweenAndNameContainingIgnoreCase(LocalDate startDate, LocalDate endDate,
-        String name);
+    @Query(value =
+               "SELECT u FROM User u WHERE (:name IS NULL OR LOWER(u.name) LIKE CONCAT('%',LOWER(cast(:name as string)),'%')) AND "
+                   + "(CAST(:start_date AS date) IS NULL OR CAST(:end_date AS date) IS NULL OR "
+                   + "u.birthDate BETWEEN :start_date AND :end_date)")
+    User[] findByBirthDateBetweenAndNameContainingIgnoreCase(
+        @Param("start_date") LocalDate startDate,
+        @Param("end_date") LocalDate endDate,
+        @Param("name") String name);
 }
