@@ -1,6 +1,8 @@
 package wolox.training.repositories;
 
+import java.util.List;
 import java.util.Optional;
+import java.util.OptionalInt;
 import org.springframework.data.repository.CrudRepository;
 import wolox.training.models.Book;
 
@@ -34,8 +36,9 @@ public interface BookRepository extends CrudRepository<Book, Long> {
      * @param publisher book's publisher
      * @param year      book's year
      * @param genre     book's genre
-     * @return Book[]
+     * @return Optional<List < book>>
      */
-    Book[] findByPublisherAndYearAndGenre(String publisher, String year, String genre);
+    Optional<List<Book>> findByPublisherAndYearAndGenre(String publisher, String year,
+        String genre);
 
 }
