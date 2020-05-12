@@ -14,7 +14,7 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
 import org.springframework.stereotype.Service;
 import wolox.training.exceptions.BookNotFoundException;
-import wolox.training.services.dtos.BookDTO;
+import wolox.training.services.dtos.OpenLibraryBookDTO;
 
 @Service("openLibraryService")
 public class OpenLibraryService {
@@ -35,7 +35,7 @@ public class OpenLibraryService {
         if (json.isEmpty()) {
             throw new BookNotFoundException();
         } else {
-            return new BookDTO(isbn, json).convertToDTO();
+            return new OpenLibraryBookDTO(isbn, json).convertToDTO();
         }
     }
 
