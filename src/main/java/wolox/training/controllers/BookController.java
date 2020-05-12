@@ -8,6 +8,8 @@ import java.net.URISyntaxException;
 import java.text.ParseException;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.ui.Model;
@@ -54,7 +56,7 @@ public class BookController {
     @GetMapping
     @ApiOperation(value = "Return all books", response = Book[].class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Return all books")})
-    public Book[] findAll(
+    public Page<Book> findAll(
         @RequestParam(required = false) Long id,
         @RequestParam(required = false) String genre,
         @RequestParam(required = false) String author,
@@ -62,10 +64,12 @@ public class BookController {
         @RequestParam(required = false) String subtitle,
         @RequestParam(required = false) String publisher,
         @RequestParam(required = false) String year,
-        @RequestParam(required = false) String isbn
+        @RequestParam(required = false) String isbn,
+        Pageable pageable
     ) {
         return bookRepository
-                   .findByAllParameters(id, genre, author, title, subtitle, publisher, year, isbn);
+                   .findByAllParameters(id, genre, author, title, subtitle, publisher, year, isbn,
+                       pageable);
     }
 
     /**
