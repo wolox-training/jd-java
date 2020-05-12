@@ -1,6 +1,7 @@
 package wolox.training.services;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -11,11 +12,9 @@ import java.net.http.HttpResponse.BodyHandlers;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.core.env.Environment;
-import org.springframework.stereotype.Component;
 import org.springframework.stereotype.Service;
 import wolox.training.exceptions.BookNotFoundException;
-import wolox.training.helpers.Json;
-import wolox.training.services.dtos.BookDTO;
+import wolox.training.services.dtos.OpenLibraryBookDTO;
 
 @Service("openLibraryService")
 public class OpenLibraryService {
@@ -31,12 +30,12 @@ public class OpenLibraryService {
     public wolox.training.pojos.dtos.BookDTO bookInformation(String isbn)
         throws InterruptedException, IOException, URISyntaxException, BookNotFoundException {
         HttpResponse<String> response = this.makeRequest(isbn);
-        JsonNode json = Json.stringToJson(response.body());
+        JsonNode json = (new ObjectMapper()).readTree(response.body());
 
         if (json.isEmpty()) {
             throw new BookNotFoundException();
         } else {
-            return new BookDTO(isbn, json).convertToDTO();
+            return new OpenLibraryBookDTO(isbn, json).convertToDTO();
         }
     }
 
