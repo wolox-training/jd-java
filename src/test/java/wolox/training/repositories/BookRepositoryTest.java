@@ -3,6 +3,7 @@ package wolox.training.repositories;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.javafaker.Faker;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.Before;
@@ -96,97 +97,100 @@ public class BookRepositoryTest {
 
     @Test
     public void whenSearchABookByPublisherAndYearAndGenre_thenBookShouldFound() {
-        Book[] booksFound = this.bookRepository
-                                .findByPublisherAndYearAndGenre(this.book.getPublisher(),
-                                    this.book.getYear(), this.book.getGenre());
+        Optional<List<Book>> booksFound = this.bookRepository
+                                              .findByPublisherAndYearAndGenre(
+                                                  this.book.getPublisher(),
+                                                  this.book.getYear(), this.book.getGenre());
 
-        assertThat(booksFound[0].getId()).isNotNull();
-        assertThat(booksFound[0].getAuthor()).isEqualTo(this.book.getAuthor());
-        assertThat(booksFound[0].getImage()).isEqualTo(this.book.getImage());
-        assertThat(booksFound[0].getTitle()).isEqualTo(this.book.getTitle());
-        assertThat(booksFound[0].getSubtitle()).isEqualTo(this.book.getSubtitle());
-        assertThat(booksFound[0].getPublisher()).isEqualTo(this.book.getPublisher());
-        assertThat(booksFound[0].getYear()).isEqualTo(this.book.getYear());
-        assertThat(booksFound[0].getPages()).isEqualTo(this.book.getPages());
-        assertThat(booksFound[0].getIsbn()).isEqualTo(this.book.getIsbn());
+        assertThat(booksFound.get().get(0).getId()).isNotNull();
+        assertThat(booksFound.get().get(0).getAuthor()).isEqualTo(this.book.getAuthor());
+        assertThat(booksFound.get().get(0).getImage()).isEqualTo(this.book.getImage());
+        assertThat(booksFound.get().get(0).getTitle()).isEqualTo(this.book.getTitle());
+        assertThat(booksFound.get().get(0).getSubtitle()).isEqualTo(this.book.getSubtitle());
+        assertThat(booksFound.get().get(0).getPublisher()).isEqualTo(this.book.getPublisher());
+        assertThat(booksFound.get().get(0).getYear()).isEqualTo(this.book.getYear());
+        assertThat(booksFound.get().get(0).getPages()).isEqualTo(this.book.getPages());
+        assertThat(booksFound.get().get(0).getIsbn()).isEqualTo(this.book.getIsbn());
     }
 
     @Test
     public void whenSearchABookByPublisherAndYearAndGenreAndPublisherIsNull_thenBookShouldFound() {
-        Book[] booksFound = this.bookRepository
-                                .findByPublisherAndYearAndGenre(null,
-                                    this.book.getYear(), this.book.getGenre());
+        Optional<List<Book>> booksFound = this.bookRepository
+                                              .findByPublisherAndYearAndGenre(null,
+                                                  this.book.getYear(), this.book.getGenre());
 
-        assertThat(booksFound[0].getId()).isNotNull();
-        assertThat(booksFound[0].getAuthor()).isEqualTo(this.book.getAuthor());
-        assertThat(booksFound[0].getImage()).isEqualTo(this.book.getImage());
-        assertThat(booksFound[0].getTitle()).isEqualTo(this.book.getTitle());
-        assertThat(booksFound[0].getSubtitle()).isEqualTo(this.book.getSubtitle());
-        assertThat(booksFound[0].getPublisher()).isEqualTo(this.book.getPublisher());
-        assertThat(booksFound[0].getYear()).isEqualTo(this.book.getYear());
-        assertThat(booksFound[0].getPages()).isEqualTo(this.book.getPages());
-        assertThat(booksFound[0].getIsbn()).isEqualTo(this.book.getIsbn());
+        assertThat(booksFound.get().get(0).getId()).isNotNull();
+        assertThat(booksFound.get().get(0).getAuthor()).isEqualTo(this.book.getAuthor());
+        assertThat(booksFound.get().get(0).getImage()).isEqualTo(this.book.getImage());
+        assertThat(booksFound.get().get(0).getTitle()).isEqualTo(this.book.getTitle());
+        assertThat(booksFound.get().get(0).getSubtitle()).isEqualTo(this.book.getSubtitle());
+        assertThat(booksFound.get().get(0).getPublisher()).isEqualTo(this.book.getPublisher());
+        assertThat(booksFound.get().get(0).getYear()).isEqualTo(this.book.getYear());
+        assertThat(booksFound.get().get(0).getPages()).isEqualTo(this.book.getPages());
+        assertThat(booksFound.get().get(0).getIsbn()).isEqualTo(this.book.getIsbn());
     }
 
     @Test
     public void whenSearchABookByPublisherAndYearAndGenreAndYearIsNull_thenBookShouldFound() {
-        Book[] booksFound = this.bookRepository
-                                .findByPublisherAndYearAndGenre(this.book.getPublisher(),
-                                    null, this.book.getGenre());
+        Optional<List<Book>> booksFound = this.bookRepository
+                                              .findByPublisherAndYearAndGenre(
+                                                  this.book.getPublisher(),
+                                                  null, this.book.getGenre());
 
-        assertThat(booksFound[0].getId()).isNotNull();
-        assertThat(booksFound[0].getAuthor()).isEqualTo(this.book.getAuthor());
-        assertThat(booksFound[0].getImage()).isEqualTo(this.book.getImage());
-        assertThat(booksFound[0].getTitle()).isEqualTo(this.book.getTitle());
-        assertThat(booksFound[0].getSubtitle()).isEqualTo(this.book.getSubtitle());
-        assertThat(booksFound[0].getPublisher()).isEqualTo(this.book.getPublisher());
-        assertThat(booksFound[0].getYear()).isEqualTo(this.book.getYear());
-        assertThat(booksFound[0].getPages()).isEqualTo(this.book.getPages());
-        assertThat(booksFound[0].getIsbn()).isEqualTo(this.book.getIsbn());
+        assertThat(booksFound.get().get(0).getId()).isNotNull();
+        assertThat(booksFound.get().get(0).getAuthor()).isEqualTo(this.book.getAuthor());
+        assertThat(booksFound.get().get(0).getImage()).isEqualTo(this.book.getImage());
+        assertThat(booksFound.get().get(0).getTitle()).isEqualTo(this.book.getTitle());
+        assertThat(booksFound.get().get(0).getSubtitle()).isEqualTo(this.book.getSubtitle());
+        assertThat(booksFound.get().get(0).getPublisher()).isEqualTo(this.book.getPublisher());
+        assertThat(booksFound.get().get(0).getYear()).isEqualTo(this.book.getYear());
+        assertThat(booksFound.get().get(0).getPages()).isEqualTo(this.book.getPages());
+        assertThat(booksFound.get().get(0).getIsbn()).isEqualTo(this.book.getIsbn());
     }
 
     @Test
     public void whenSearchABookByPublisherAndYearAndGenreAndGenreIsNull_thenBookShouldFound() {
-        Book[] booksFound = this.bookRepository
-                                .findByPublisherAndYearAndGenre(this.book.getPublisher(),
-                                    this.book.getYear(), null);
+        Optional<List<Book>> booksFound = this.bookRepository
+                                              .findByPublisherAndYearAndGenre(
+                                                  this.book.getPublisher(),
+                                                  this.book.getYear(), null);
 
-        assertThat(booksFound[0].getId()).isNotNull();
-        assertThat(booksFound[0].getAuthor()).isEqualTo(this.book.getAuthor());
-        assertThat(booksFound[0].getImage()).isEqualTo(this.book.getImage());
-        assertThat(booksFound[0].getTitle()).isEqualTo(this.book.getTitle());
-        assertThat(booksFound[0].getSubtitle()).isEqualTo(this.book.getSubtitle());
-        assertThat(booksFound[0].getPublisher()).isEqualTo(this.book.getPublisher());
-        assertThat(booksFound[0].getYear()).isEqualTo(this.book.getYear());
-        assertThat(booksFound[0].getPages()).isEqualTo(this.book.getPages());
-        assertThat(booksFound[0].getIsbn()).isEqualTo(this.book.getIsbn());
+        assertThat(booksFound.get().get(0).getId()).isNotNull();
+        assertThat(booksFound.get().get(0).getAuthor()).isEqualTo(this.book.getAuthor());
+        assertThat(booksFound.get().get(0).getImage()).isEqualTo(this.book.getImage());
+        assertThat(booksFound.get().get(0).getTitle()).isEqualTo(this.book.getTitle());
+        assertThat(booksFound.get().get(0).getSubtitle()).isEqualTo(this.book.getSubtitle());
+        assertThat(booksFound.get().get(0).getPublisher()).isEqualTo(this.book.getPublisher());
+        assertThat(booksFound.get().get(0).getYear()).isEqualTo(this.book.getYear());
+        assertThat(booksFound.get().get(0).getPages()).isEqualTo(this.book.getPages());
+        assertThat(booksFound.get().get(0).getIsbn()).isEqualTo(this.book.getIsbn());
     }
 
     @Test
     public void whenSearchABookByPublisherAndYearAndGenreAndAllIsNull_thenBookShouldFound() {
-        Book[] booksFound = this.bookRepository
-                                .findByPublisherAndYearAndGenre(null, null, null);
+        Optional<List<Book>> booksFound = this.bookRepository
+                                              .findByPublisherAndYearAndGenre(null, null, null);
 
-        assertThat(booksFound.length).isGreaterThan(0);
-        assertThat(booksFound[0].getId()).isNotNull();
-        assertThat(booksFound[0].getAuthor()).isEqualTo(this.book.getAuthor());
-        assertThat(booksFound[0].getImage()).isEqualTo(this.book.getImage());
-        assertThat(booksFound[0].getTitle()).isEqualTo(this.book.getTitle());
-        assertThat(booksFound[0].getSubtitle()).isEqualTo(this.book.getSubtitle());
-        assertThat(booksFound[0].getPublisher()).isEqualTo(this.book.getPublisher());
-        assertThat(booksFound[0].getYear()).isEqualTo(this.book.getYear());
-        assertThat(booksFound[0].getPages()).isEqualTo(this.book.getPages());
-        assertThat(booksFound[0].getIsbn()).isEqualTo(this.book.getIsbn());
+        assertThat(booksFound.isEmpty()).isEqualTo(false);
+        assertThat(booksFound.get().get(0).getId()).isNotNull();
+        assertThat(booksFound.get().get(0).getAuthor()).isEqualTo(this.book.getAuthor());
+        assertThat(booksFound.get().get(0).getImage()).isEqualTo(this.book.getImage());
+        assertThat(booksFound.get().get(0).getTitle()).isEqualTo(this.book.getTitle());
+        assertThat(booksFound.get().get(0).getSubtitle()).isEqualTo(this.book.getSubtitle());
+        assertThat(booksFound.get().get(0).getPublisher()).isEqualTo(this.book.getPublisher());
+        assertThat(booksFound.get().get(0).getYear()).isEqualTo(this.book.getYear());
+        assertThat(booksFound.get().get(0).getPages()).isEqualTo(this.book.getPages());
+        assertThat(booksFound.get().get(0).getIsbn()).isEqualTo(this.book.getIsbn());
     }
 
     @Test
     public void whenSearchABookByPublisherAndYearAndGenre_thenBookNotFound() {
         Optional<Book> bookFound = this.bookRepository.findFirstByIsbn(faker.book().author());
-        Book[] booksFound = this.bookRepository
-                                .findByPublisherAndYearAndGenre(faker.book().author(),
-                                    "1234", faker.book().author());
+        Optional<List<Book>> booksFound = this.bookRepository
+                                              .findByPublisherAndYearAndGenre(faker.book().author(),
+                                                  "1234", faker.book().author());
 
-        assertThat(booksFound.length).isEqualTo(0);
+        assertThat(booksFound.isEmpty()).isEqualTo(true);
     }
 
 }

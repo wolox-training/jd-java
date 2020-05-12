@@ -299,15 +299,19 @@ public class UserControllerTest {
 
     @Test
     public void whenUpdateUserPassword_thenReturnNoContent() throws Exception {
+        String old_password = this.user.getPassword();
+        this.user.setPassword(passwordEncoder.encode(this.user.getPassword()));
+
         given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
         given(this.userRepository.save(Mockito.any())).willReturn(this.user);
 
         HashMap<String, Object> requestBody = new HashMap<String, Object>() {{
-            put("password", "test");
+            put("old_password", old_password);
+            put("new_password", "test");
         }};
 
         this.mockMvc.perform(
-            patch("/api/users/" + this.user.getId())
+            patch("/api/users/" + this.user.getId() + "/password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .content(this.objectMapper.writeValueAsString(requestBody))
@@ -316,15 +320,41 @@ public class UserControllerTest {
     }
 
     @Test
-    public void whenUpdateUserPasswordButUserNotFound_thenReturnJsonError() throws Exception {
+    public void whenUpdateUserPasswordButUserNotFound_thenReturnUserNotFoundException()
+        throws Exception {
+        String old_password = this.user.getPassword();
+        this.user.setPassword(passwordEncoder.encode(this.user.getPassword()));
+
         given(this.userRepository.findById(this.user.getId()))
             .willReturn(Optional.empty());
         HashMap<String, Object> requestBody = new HashMap<String, Object>() {{
-            put("password", "test");
+            put("old_password", old_password);
+            put("new_password", "test");
         }};
 
         this.mockMvc.perform(
-            patch("/api/users/" + this.user.getId())
+            patch("/api/users/" + this.user.getId() + "/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8")
+                .content(this.objectMapper.writeValueAsString(requestBody))
+        )
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void whenUpdateUserPasswordButOldPasswordMismatch_thenReturnUserPasswordMismatchException()
+        throws Exception {
+        String old_password = "1234567";
+
+        given(this.userRepository.findById(this.user.getId()))
+            .willReturn(Optional.empty());
+        HashMap<String, Object> requestBody = new HashMap<String, Object>() {{
+            put("old_password", old_password);
+            put("new_password", "test");
+        }};
+
+        this.mockMvc.perform(
+            patch("/api/users/" + this.user.getId() + "/password")
                 .contentType(MediaType.APPLICATION_JSON)
                 .characterEncoding("utf-8")
                 .content(this.objectMapper.writeValueAsString(requestBody))
