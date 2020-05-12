@@ -66,7 +66,7 @@ public interface BookRepository extends CrudRepository<Book, Long> {
                + "(:publisher IS NULL OR b.publisher = :publisher) AND "
                + "(:year IS NULL OR b.year = :year) AND "
                + "(:isbn IS NULL OR b.isbn = :isbn)")
-    Book[] findByAllParameters(
+    List<Book> findByAllParameters(
         @Param("id") Long id,
         @Param("genre") String genre,
         @Param("author") String author,

@@ -6,6 +6,7 @@ import io.swagger.annotations.ApiResponses;
 import java.io.IOException;
 import java.net.URISyntaxException;
 import java.text.ParseException;
+import java.util.List;
 import java.util.Optional;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -54,7 +55,7 @@ public class BookController {
     @GetMapping
     @ApiOperation(value = "Return all books", response = Book[].class)
     @ApiResponses(value = {@ApiResponse(code = 200, message = "Return all books")})
-    public Book[] findAll(
+    public List<Book> findAll(
         @RequestParam(required = false) Long id,
         @RequestParam(required = false) String genre,
         @RequestParam(required = false) String author,
