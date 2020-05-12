@@ -1,20 +1,21 @@
 package wolox.training.services.dtos;
 
 import com.fasterxml.jackson.databind.JsonNode;
+import wolox.training.pojos.dtos.BookDTO;
 
-public class BookDTO {
+public class OpenLibraryBookDTO {
 
     private JsonNode json;
 
     private String isbn;
 
-    public BookDTO(String isbn, JsonNode json) {
+    public OpenLibraryBookDTO(String isbn, JsonNode json) {
         this.isbn = isbn;
         this.json = json.get("ISBN:" + isbn);
     }
 
-    public wolox.training.pojos.dtos.BookDTO convertToDTO() {
-        return new wolox.training.pojos.dtos.BookDTO(
+    public BookDTO convertToDTO() {
+        return new BookDTO(
             0,
             this.getGenre(),
             this.getAuthor(),
