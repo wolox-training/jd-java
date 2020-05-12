@@ -25,6 +25,7 @@ import wolox.training.exceptions.BookAlreadyOwnedException;
 import wolox.training.exceptions.BookNotFoundException;
 import wolox.training.exceptions.UserIdMismatchException;
 import wolox.training.exceptions.UserNotFoundException;
+import wolox.training.exceptions.UserPasswordMismatchException;
 import wolox.training.models.Book;
 import wolox.training.models.User;
 import wolox.training.repositories.BookRepository;
@@ -152,18 +153,24 @@ public class UserController {
      * @param id          identifications's user
      * @throws UserNotFoundException
      */
-    @PatchMapping("/{id}")
+    @PatchMapping("/{id}/password")
     @ApiOperation(value = "Returns user updated")
     @ApiResponses(value = {
         @ApiResponse(code = 204, message = "Updates user correctly"),
         @ApiResponse(code = 404, message = "User Not Found")
     })
     @ResponseStatus(HttpStatus.NO_CONTENT)
-    public void update(@RequestBody Map<String, Object> requestBody, @PathVariable long id)
-        throws UserNotFoundException {
+    public void password(@RequestBody Map<String, Object> requestBody, @PathVariable long id)
+        throws UserNotFoundException, UserPasswordMismatchException {
         User user = userRepository.findById(id).orElseThrow(UserNotFoundException::new);
-        user.setPassword(passwordEncoder.encode(requestBody.get("password").toString()));
-        userRepository.save(user);
+
+        if (passwordEncoder
+                .matches(requestBody.get("old_password").toString(), user.getPassword())) {
+            user.setPassword(passwordEncoder.encode(requestBody.get("new_password").toString()));
+            userRepository.save(user);
+        } else {
+            throw new UserPasswordMismatchException();
+        }
     }
 
     /**
