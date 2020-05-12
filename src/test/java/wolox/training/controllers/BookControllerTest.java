@@ -12,8 +12,10 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
@@ -58,7 +60,7 @@ public class BookControllerTest {
 
     private Book book;
 
-    private Book[] bookList;
+    private ArrayList<Book> bookList;
 
     private HashMap<String, Object> bookMap;
 
@@ -71,11 +73,10 @@ public class BookControllerTest {
         BookFactory bookFactory = new BookFactory();
         this.bookMap = bookFactory.book();
         this.book = bookFactory.bookModel(this.bookMap);
-        this.bookList = new Book[1];
-        Arrays.fill(
-            this.bookList,
+        this.bookList = new ArrayList<Book>(Arrays.asList(
             this.book
-        );
+        ));
+
     }
 
 
