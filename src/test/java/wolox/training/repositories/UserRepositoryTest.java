@@ -5,7 +5,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import com.github.javafaker.Faker;
 import java.time.LocalDate;
 import java.time.temporal.ChronoUnit;
-import java.time.temporal.TemporalUnit;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
@@ -130,4 +129,53 @@ public class UserRepositoryTest {
         assertThat(usersFound.isEmpty()).isEqualTo(true);
     }
 
+    @Test
+    public void whenSearchUsersByBirthDateBetweenAndBirthDateAndStartDateIsNull_thenShowUsersThatMeetTheParameters() {
+        Optional<List<User>> usersFound = this.userRepository
+                                              .findByBirthDateBetweenAndNameContainingIgnoreCase(
+                                                  null,
+                                                  this.user.getBirthDate().plus(4, ChronoUnit.DAYS),
+                                                  this.user.getName()
+                                              );
+
+        assertThat(usersFound.isEmpty()).isEqualTo(false);
+    }
+
+    @Test
+    public void whenSearchUsersByBirthDateBetweenAndBirthDateAndEndDateIsNull_thenShowUsersThatMeetTheParameters() {
+        Optional<List<User>> usersFound = this.userRepository
+                                              .findByBirthDateBetweenAndNameContainingIgnoreCase(
+                                                  this.user.getBirthDate()
+                                                      .minus(2, ChronoUnit.DAYS),
+                                                  this.user.getBirthDate().plus(4, ChronoUnit.DAYS),
+                                                  this.user.getName()
+                                              );
+
+        assertThat(usersFound.isEmpty()).isEqualTo(false);
+    }
+
+    @Test
+    public void whenSearchUsersByBirthDateBetweenAndBirthDateAndNameIsNull_thenShowUsersThatMeetTheParameters() {
+        Optional<List<User>> usersFound = this.userRepository
+                                              .findByBirthDateBetweenAndNameContainingIgnoreCase(
+                                                  this.user.getBirthDate()
+                                                      .minus(2, ChronoUnit.DAYS),
+                                                  this.user.getBirthDate().plus(4, ChronoUnit.DAYS),
+                                                  null
+                                              );
+
+        assertThat(usersFound.isEmpty()).isEqualTo(false);
+    }
+
+    @Test
+    public void whenSearchUsersByBirthDateBetweenAndBirthDateAndAllIsNull_thenShowAllUsers() {
+        Optional<List<User>> usersFound = this.userRepository
+                                              .findByBirthDateBetweenAndNameContainingIgnoreCase(
+                                                  null,
+                                                  null,
+                                                  null
+                                              );
+
+        assertThat(usersFound.isEmpty()).isEqualTo(false);
+    }
 }
