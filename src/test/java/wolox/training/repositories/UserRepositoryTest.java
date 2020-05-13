@@ -4,6 +4,9 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import com.github.javafaker.Faker;
 import java.time.LocalDate;
+import java.time.temporal.ChronoUnit;
+import java.time.temporal.TemporalUnit;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import org.junit.Before;
@@ -64,6 +67,67 @@ public class UserRepositoryTest {
                                        .findFirstByName(this.faker.name().fullName());
 
         assertThat(userFound.orElse(null)).isNull();
+    }
+
+    @Test
+    public void whenSearchUsersByBirthDateBetweenAndName_thenUsersShouldFound() {
+        Optional<List<User>> usersFound = this.userRepository
+                                              .findByBirthDateBetweenAndNameContainingIgnoreCase(
+                                                  this.user.getBirthDate()
+                                                      .minus(2, ChronoUnit.DAYS),
+                                                  this.user.getBirthDate().plus(2, ChronoUnit.DAYS),
+                                                  this.user.getName()
+                                              );
+
+        assertThat(usersFound.get().get(0).getId()).isNotNull();
+        assertThat(usersFound.get().get(0).getUsername())
+            .isEqualTo(this.user.getUsername().toString());
+        assertThat(usersFound.get().get(0).getName()).isEqualTo(this.user.getName().toString());
+        assertThat(usersFound.get().get(0).getBirthDate())
+            .isEqualTo(LocalDate.parse(this.user.getBirthDate().toString()));
+    }
+
+    @Test
+    public void whenSearchUsersByBirthDateBetweenAndNameUpperCase_thenUsersShouldFound() {
+        Optional<List<User>> usersFound = this.userRepository
+                                              .findByBirthDateBetweenAndNameContainingIgnoreCase(
+                                                  this.user.getBirthDate()
+                                                      .minus(2, ChronoUnit.DAYS),
+                                                  this.user.getBirthDate().plus(2, ChronoUnit.DAYS),
+                                                  this.user.getName().toUpperCase()
+                                              );
+
+        assertThat(usersFound.get().get(0).getId()).isNotNull();
+        assertThat(usersFound.get().get(0).getUsername())
+            .isEqualTo(this.user.getUsername().toString());
+        assertThat(usersFound.get().get(0).getName()).isEqualTo(this.user.getName().toString());
+        assertThat(usersFound.get().get(0).getBirthDate())
+            .isEqualTo(LocalDate.parse(this.user.getBirthDate().toString()));
+    }
+
+    @Test
+    public void whenSearchUsersByBirthDateBetweenAndNameIsDifferent_thenUsersShouldNotFound() {
+        Optional<List<User>> usersFound = this.userRepository
+                                              .findByBirthDateBetweenAndNameContainingIgnoreCase(
+                                                  this.user.getBirthDate()
+                                                      .minus(2, ChronoUnit.DAYS),
+                                                  this.user.getBirthDate().plus(2, ChronoUnit.DAYS),
+                                                  "test"
+                                              );
+
+        assertThat(usersFound.isEmpty()).isEqualTo(true);
+    }
+
+    @Test
+    public void whenSearchUsersByBirthDateBetweenAndBirthDateIsNotBetween_thenUsersShouldFound() {
+        Optional<List<User>> usersFound = this.userRepository
+                                              .findByBirthDateBetweenAndNameContainingIgnoreCase(
+                                                  this.user.getBirthDate().plus(2, ChronoUnit.DAYS),
+                                                  this.user.getBirthDate().plus(4, ChronoUnit.DAYS),
+                                                  this.user.getName()
+                                              );
+
+        assertThat(usersFound.isEmpty()).isEqualTo(true);
     }
 
 }
