@@ -3,6 +3,8 @@ package wolox.training.repositories;
 import java.time.LocalDate;
 import java.util.List;
 import java.util.Optional;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.data.repository.query.Param;
@@ -48,4 +50,12 @@ public interface UserRepository extends CrudRepository<User, Long> {
         @Param("start_date") LocalDate startDate,
         @Param("end_date") LocalDate endDate,
         @Param("name") String name);
+
+    /**
+     * Show all users with pagination
+     *
+     * @param pageable
+     * @return Page<User>
+     */
+    Page<User> findAll(Pageable pageable);
 }

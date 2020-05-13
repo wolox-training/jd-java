@@ -14,6 +14,8 @@ import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabas
 import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase.Replace;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.test.context.junit4.SpringRunner;
 import wolox.training.factories.BookFactory;
 import wolox.training.models.Book;
@@ -195,9 +197,10 @@ public class BookRepositoryTest {
 
     @Test
     public void whenFindByAllParameters_thenBookShouldFound() {
-        List<Book> booksFound = this.bookRepository
-                                    .findByAllParameters(null, null, null, null, null, null, null,
-                                        null);
+        Page<Book> books = this.bookRepository
+                               .findByAllParameters(null, null, null, null, null, null, null,
+                                   null, org.mockito.Matchers.isA(Pageable.class));
+        List<Book> booksFound = books.toList();
 
         assertThat(booksFound.isEmpty()).isEqualTo(false);
         assertThat(booksFound.get(0).getId()).isNotNull();
@@ -213,9 +216,10 @@ public class BookRepositoryTest {
 
     @Test
     public void whenFindByAllParametersFilterById_thenBookShouldFound() {
-        List<Book> booksFound = this.bookRepository
-                                    .findByAllParameters(this.book.getId(), null, null, null, null,
-                                        null, null, null);
+        Page<Book> books = this.bookRepository
+                               .findByAllParameters(this.book.getId(), null, null, null, null,
+                                   null, null, null, org.mockito.Matchers.isA(Pageable.class));
+        List<Book> booksFound = books.toList();
 
         assertThat(booksFound.isEmpty()).isEqualTo(false);
         assertThat(booksFound.get(0).getId()).isNotNull();
@@ -231,10 +235,10 @@ public class BookRepositoryTest {
 
     @Test
     public void whenFindByAllParametersFilterByGenre_thenBookShouldFound() {
-        List<Book> booksFound = this.bookRepository
-                                    .findByAllParameters(null, this.book.getGenre(), null, null,
-                                        null,
-                                        null, null, null);
+        Page<Book> books = this.bookRepository
+                               .findByAllParameters(null, this.book.getGenre(), null, null, null,
+                                   null, null, null, org.mockito.Matchers.isA(Pageable.class));
+        List<Book> booksFound = books.toList();
 
         assertThat(booksFound.isEmpty()).isEqualTo(false);
         assertThat(booksFound.get(0).getId()).isNotNull();
@@ -250,10 +254,11 @@ public class BookRepositoryTest {
 
     @Test
     public void whenFindByAllParametersFilterByAuthor_thenBookShouldFound() {
-        List<Book> booksFound = this.bookRepository
-                                    .findByAllParameters(null, null, this.book.getAuthor(), null,
-                                        null,
-                                        null, null, null);
+        Page<Book> books = this.bookRepository
+                               .findByAllParameters(null, null, this.book.getAuthor(), null,
+                                   null, null, null, null,
+                                   org.mockito.Matchers.isA(Pageable.class));
+        List<Book> booksFound = books.toList();
 
         assertThat(booksFound.isEmpty()).isEqualTo(false);
         assertThat(booksFound.get(0).getId()).isNotNull();
@@ -269,10 +274,11 @@ public class BookRepositoryTest {
 
     @Test
     public void whenFindByAllParametersFilterByTitle_thenBookShouldFound() {
-        List<Book> booksFound = this.bookRepository
-                                    .findByAllParameters(null, null, null, this.book.getTitle(),
-                                        null,
-                                        null, null, null);
+        Page<Book> books = this.bookRepository
+                               .findByAllParameters(null, null, null, this.book.getTitle(),
+                                   null, null, null, null,
+                                   org.mockito.Matchers.isA(Pageable.class));
+        List<Book> booksFound = books.toList();
 
         assertThat(booksFound.isEmpty()).isEqualTo(false);
         assertThat(booksFound.get(0).getId()).isNotNull();
@@ -288,9 +294,11 @@ public class BookRepositoryTest {
 
     @Test
     public void whenFindByAllParametersFilterBySubtitle_thenBookShouldFound() {
-        List<Book> booksFound = this.bookRepository
-                                    .findByAllParameters(null, null, null, null,
-                                        this.book.getSubtitle(), null, null, null);
+        Page<Book> books = this.bookRepository
+                               .findByAllParameters(null, null, null, null,
+                                   this.book.getSubtitle(), null, null, null,
+                                   org.mockito.Matchers.isA(Pageable.class));
+        List<Book> booksFound = books.toList();
 
         assertThat(booksFound.isEmpty()).isEqualTo(false);
         assertThat(booksFound.get(0).getId()).isNotNull();
@@ -306,9 +314,11 @@ public class BookRepositoryTest {
 
     @Test
     public void whenFindByAllParametersFilterByPublisher_thenBookShouldFound() {
-        List<Book> booksFound = this.bookRepository
-                                    .findByAllParameters(null, null, null, null, null,
-                                        this.book.getPublisher(), null, null);
+        Page<Book> books = this.bookRepository
+                               .findByAllParameters(null, null, null, null, null,
+                                   this.book.getPublisher(), null, null,
+                                   org.mockito.Matchers.isA(Pageable.class));
+        List<Book> booksFound = books.toList();
 
         assertThat(booksFound.isEmpty()).isEqualTo(false);
         assertThat(booksFound.get(0).getId()).isNotNull();
@@ -324,9 +334,11 @@ public class BookRepositoryTest {
 
     @Test
     public void whenFindByAllParametersFilterByYear_thenBookShouldFound() {
-        List<Book> booksFound = this.bookRepository
-                                    .findByAllParameters(null, null, null, null, null, null,
-                                        this.book.getYear(), null);
+        Page<Book> books = this.bookRepository
+                               .findByAllParameters(null, null, null, null, null, null,
+                                   this.book.getYear(), null,
+                                   org.mockito.Matchers.isA(Pageable.class));
+        List<Book> booksFound = books.toList();
 
         assertThat(booksFound.isEmpty()).isEqualTo(false);
         assertThat(booksFound.get(0).getId()).isNotNull();
@@ -342,9 +354,10 @@ public class BookRepositoryTest {
 
     @Test
     public void whenFindByAllParametersFilterByIsbn_thenBookShouldFound() {
-        List<Book> booksFound = this.bookRepository
-                                    .findByAllParameters(null, null, null, null, null, null, null,
-                                        this.book.getIsbn());
+        Page<Book> books = this.bookRepository
+                               .findByAllParameters(null, null, null, null, null, null, null,
+                                   this.book.getIsbn(), org.mockito.Matchers.isA(Pageable.class));
+        List<Book> booksFound = books.toList();
 
         assertThat(booksFound.isEmpty()).isEqualTo(false);
         assertThat(booksFound.get(0).getId()).isNotNull();
