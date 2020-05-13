@@ -37,6 +37,7 @@ import org.springframework.web.util.NestedServletException;
 import wolox.training.config.SecurityConfigTest;
 import wolox.training.factories.BookFactory;
 import wolox.training.factories.UserFactory;
+import wolox.training.mocks.SecurityMock;
 import wolox.training.models.Book;
 import wolox.training.models.User;
 import wolox.training.repositories.BookRepository;
@@ -358,6 +359,27 @@ public class UserControllerTest {
                 .characterEncoding("utf-8")
                 .content(this.objectMapper.writeValueAsString(requestBody))
         )
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void whenGetCurrentLoggedUser_thenReturnJsonObject() throws Exception {
+        SecurityMock.authentication();
+        given(this.userRepository.findFirstByUsername("user"))
+            .willReturn(Optional.of(this.user));
+
+        this.mockMvc.perform(get("/api/users/current"))
+            .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    public void whenGetCurrentLoggedUserButNotFound_thenReturnUserNotFoundException()
+        throws Exception {
+        SecurityMock.authentication();
+        given(this.userRepository.findFirstByUsername("user"))
+            .willReturn(Optional.empty());
+
+        this.mockMvc.perform(get("/api/users/current"))
             .andExpect(status().is4xxClientError());
     }
 }
