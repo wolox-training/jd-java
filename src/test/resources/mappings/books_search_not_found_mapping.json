@@ -1,0 +1,25 @@
+{
+  "request": {
+    "urlPath": "/api/books",
+    "method": "GET",
+    "queryParameters": {
+      "bibkeys": {
+        "equalTo": "ISBN:0000000009"
+      },
+      "format": {
+        "equalTo": "json"
+      },
+      "jscmd": {
+        "equalTo": "data"
+      }
+    }
+  },
+  "response": {
+    "status": 200,
+    "bodyFileName": "books_search_not_found_response.json",
+    "headers": {
+      "Content-Type": "application/json"
+    },
+    "fixedDelayMilliseconds": 2000
+  }
+}
