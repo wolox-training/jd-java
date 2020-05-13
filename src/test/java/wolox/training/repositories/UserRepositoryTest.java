@@ -40,7 +40,8 @@ public class UserRepositoryTest {
         this.user = new User(
             userMap.get("username").toString(),
             userMap.get("name").toString(),
-            LocalDate.parse(userMap.get("birth_date").toString())
+            LocalDate.parse(userMap.get("birth_date").toString()),
+            userMap.get("password").toString()
         );
         this.testEntityManager.persist(this.user);
         this.testEntityManager.flush();

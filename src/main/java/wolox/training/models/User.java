@@ -68,6 +68,14 @@ public class User {
     private String name;
 
     /**
+     * Password's user
+     */
+    @JsonProperty(access = JsonProperty.Access.WRITE_ONLY)
+    @Column(nullable = false)
+    @NotNull
+    private String password;
+
+    /**
      * User's birth date
      */
     @Column(nullable = false)
@@ -82,10 +90,11 @@ public class User {
     @ManyToMany(cascade = {CascadeType.MERGE, CascadeType.REFRESH}, fetch = FetchType.LAZY)
     private List<Book> books;
 
-    public User(String username, String name, LocalDate birthDate) {
+    public User(String username, String name, LocalDate birthDate, String password) {
         this.username = username;
         this.name = name;
         this.birthDate = birthDate;
+        this.password = password;
     }
 
     /**
@@ -120,15 +129,25 @@ public class User {
     }
 
     /**
+     * Set password of the user
+     *
+     * @param password
+     */
+    public void setPassword(String password) {
+        checkNotNull(password);
+        this.password = password;
+    }
+
+    /**
      * Get user's books
      *
      * @return List of books that belongs to the user
      */
     public List<Book> getBooks() {
         if (books != null) {
-            return (List<Book>) Collections.unmodifiableList(books);
+            return Collections.unmodifiableList(books);
         } else {
-            return new ArrayList<Book>();
+            return new ArrayList<>();
         }
     }
 

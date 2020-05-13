@@ -5,16 +5,14 @@ import static org.mockito.BDDMockito.given;
 import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.delete;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.patch;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
-import static org.springframework.test.web.servlet.result.MockMvcResultHandlers.print;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -23,15 +21,20 @@ import java.util.Optional;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.mockito.Mockito;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.core.userdetails.UserDetailsService;
+import org.springframework.security.crypto.password.PasswordEncoder;
+import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.util.NestedServletException;
+import wolox.training.config.SecurityConfigTest;
 import wolox.training.factories.BookFactory;
 import wolox.training.factories.UserFactory;
 import wolox.training.models.Book;
@@ -41,6 +44,7 @@ import wolox.training.repositories.UserRepository;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(UserController.class)
+@ContextConfiguration(classes = {SecurityConfigTest.class, UserController.class})
 public class UserControllerTest {
 
     @Autowired
@@ -48,6 +52,12 @@ public class UserControllerTest {
 
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private PasswordEncoder passwordEncoder;
+
+    @Autowired
+    private UserDetailsService userDetailsService;
 
     @MockBean
     private UserRepository userRepository;
@@ -125,21 +135,20 @@ public class UserControllerTest {
 
     @Test
     public void whenSavesAUser_thenReturnUserJsonObject() throws Exception {
-        given(this.userRepository.save(this.user)).willReturn(this.user);
+        given(this.userRepository.save(Mockito.any())).willReturn(this.user);
 
         this.mockMvc
             .perform(post("/api/users")
                          .contentType(MediaType.APPLICATION_JSON)
                          .characterEncoding("utf-8")
                          .content(this.objectMapper.writeValueAsString(this.userMap)))
-            .andExpect(status().isCreated())
-            .andExpect(content().contentType(MediaType.APPLICATION_JSON));
+            .andExpect(status().isCreated());
     }
 
     @Test(expected = NestedServletException.class)
     public void whenSavesAUserWithoutRequiredParams_thenReturnNullPointerException()
         throws Exception {
-        when(this.userRepository.save(this.user)).thenThrow(NullPointerException.class);
+        when(this.userRepository.save(Mockito.any())).thenThrow(NullPointerException.class);
 
         this.mockMvc
             .perform(post("/api/users")
@@ -215,7 +224,6 @@ public class UserControllerTest {
         this.mockMvc.perform(
             post("/api/users/" + this.user.getId() + "/books/" + this.book.getId() + "/add")
         )
-            .andDo(print())
             .andExpect(status().isOk());
     }
 
@@ -263,7 +271,6 @@ public class UserControllerTest {
         this.mockMvc.perform(
             post("/api/users/" + this.user.getId() + "/books/" + this.book.getId() + "/add")
         )
-            .andDo(print())
             .andExpect(status().isOk());
     }
 
@@ -285,6 +292,71 @@ public class UserControllerTest {
 
         this.mockMvc.perform(
             post("/api/users/" + this.user.getId() + "/books/" + this.book.getId() + "/add")
+        )
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void whenUpdateUserPassword_thenReturnNoContent() throws Exception {
+        String old_password = this.user.getPassword();
+        this.user.setPassword(passwordEncoder.encode(this.user.getPassword()));
+
+        given(this.userRepository.findById(this.user.getId())).willReturn(Optional.of(this.user));
+        given(this.userRepository.save(Mockito.any())).willReturn(this.user);
+
+        HashMap<String, Object> requestBody = new HashMap<String, Object>() {{
+            put("old_password", old_password);
+            put("new_password", "test");
+        }};
+
+        this.mockMvc.perform(
+            patch("/api/users/" + this.user.getId() + "/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8")
+                .content(this.objectMapper.writeValueAsString(requestBody))
+        )
+            .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    public void whenUpdateUserPasswordButUserNotFound_thenReturnUserNotFoundException()
+        throws Exception {
+        String old_password = this.user.getPassword();
+        this.user.setPassword(passwordEncoder.encode(this.user.getPassword()));
+
+        given(this.userRepository.findById(this.user.getId()))
+            .willReturn(Optional.empty());
+        HashMap<String, Object> requestBody = new HashMap<String, Object>() {{
+            put("old_password", old_password);
+            put("new_password", "test");
+        }};
+
+        this.mockMvc.perform(
+            patch("/api/users/" + this.user.getId() + "/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8")
+                .content(this.objectMapper.writeValueAsString(requestBody))
+        )
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void whenUpdateUserPasswordButOldPasswordMismatch_thenReturnUserPasswordMismatchException()
+        throws Exception {
+        String old_password = "1234567";
+
+        given(this.userRepository.findById(this.user.getId()))
+            .willReturn(Optional.empty());
+        HashMap<String, Object> requestBody = new HashMap<String, Object>() {{
+            put("old_password", old_password);
+            put("new_password", "test");
+        }};
+
+        this.mockMvc.perform(
+            patch("/api/users/" + this.user.getId() + "/password")
+                .contentType(MediaType.APPLICATION_JSON)
+                .characterEncoding("utf-8")
+                .content(this.objectMapper.writeValueAsString(requestBody))
         )
             .andExpect(status().is4xxClientError());
     }

@@ -16,6 +16,7 @@ public class UserFactory {
             put("username", faker.name().username());
             put("name", faker.name().fullName());
             put("birth_date", getBirthDate().toString());
+            put("password", faker.crypto().md5());
         }};
     }
 
@@ -29,7 +30,8 @@ public class UserFactory {
         return new User(
             userMap.get("username").toString(),
             userMap.get("name").toString(),
-            LocalDate.parse(userMap.get("birth_date").toString())
+            LocalDate.parse(userMap.get("birth_date").toString()),
+            userMap.get("password").toString()
         );
     }
 }
