@@ -193,4 +193,169 @@ public class BookRepositoryTest {
         assertThat(booksFound.isEmpty()).isEqualTo(true);
     }
 
+    @Test
+    public void whenFindByAllParameters_thenBookShouldFound() {
+        List<Book> booksFound = this.bookRepository
+                                    .findByAllParameters(null, null, null, null, null, null, null,
+                                        null);
+
+        assertThat(booksFound.isEmpty()).isEqualTo(false);
+        assertThat(booksFound.get(0).getId()).isNotNull();
+        assertThat(booksFound.get(0).getAuthor()).isEqualTo(this.book.getAuthor());
+        assertThat(booksFound.get(0).getImage()).isEqualTo(this.book.getImage());
+        assertThat(booksFound.get(0).getTitle()).isEqualTo(this.book.getTitle());
+        assertThat(booksFound.get(0).getSubtitle()).isEqualTo(this.book.getSubtitle());
+        assertThat(booksFound.get(0).getPublisher()).isEqualTo(this.book.getPublisher());
+        assertThat(booksFound.get(0).getYear()).isEqualTo(this.book.getYear());
+        assertThat(booksFound.get(0).getPages()).isEqualTo(this.book.getPages());
+        assertThat(booksFound.get(0).getIsbn()).isEqualTo(this.book.getIsbn());
+    }
+
+    @Test
+    public void whenFindByAllParametersFilterById_thenBookShouldFound() {
+        List<Book> booksFound = this.bookRepository
+                                    .findByAllParameters(this.book.getId(), null, null, null, null,
+                                        null, null, null);
+
+        assertThat(booksFound.isEmpty()).isEqualTo(false);
+        assertThat(booksFound.get(0).getId()).isNotNull();
+        assertThat(booksFound.get(0).getAuthor()).isEqualTo(this.book.getAuthor());
+        assertThat(booksFound.get(0).getImage()).isEqualTo(this.book.getImage());
+        assertThat(booksFound.get(0).getTitle()).isEqualTo(this.book.getTitle());
+        assertThat(booksFound.get(0).getSubtitle()).isEqualTo(this.book.getSubtitle());
+        assertThat(booksFound.get(0).getPublisher()).isEqualTo(this.book.getPublisher());
+        assertThat(booksFound.get(0).getYear()).isEqualTo(this.book.getYear());
+        assertThat(booksFound.get(0).getPages()).isEqualTo(this.book.getPages());
+        assertThat(booksFound.get(0).getIsbn()).isEqualTo(this.book.getIsbn());
+    }
+
+    @Test
+    public void whenFindByAllParametersFilterByGenre_thenBookShouldFound() {
+        List<Book> booksFound = this.bookRepository
+                                    .findByAllParameters(null, this.book.getGenre(), null, null,
+                                        null,
+                                        null, null, null);
+
+        assertThat(booksFound.isEmpty()).isEqualTo(false);
+        assertThat(booksFound.get(0).getId()).isNotNull();
+        assertThat(booksFound.get(0).getAuthor()).isEqualTo(this.book.getAuthor());
+        assertThat(booksFound.get(0).getImage()).isEqualTo(this.book.getImage());
+        assertThat(booksFound.get(0).getTitle()).isEqualTo(this.book.getTitle());
+        assertThat(booksFound.get(0).getSubtitle()).isEqualTo(this.book.getSubtitle());
+        assertThat(booksFound.get(0).getPublisher()).isEqualTo(this.book.getPublisher());
+        assertThat(booksFound.get(0).getYear()).isEqualTo(this.book.getYear());
+        assertThat(booksFound.get(0).getPages()).isEqualTo(this.book.getPages());
+        assertThat(booksFound.get(0).getIsbn()).isEqualTo(this.book.getIsbn());
+    }
+
+    @Test
+    public void whenFindByAllParametersFilterByAuthor_thenBookShouldFound() {
+        List<Book> booksFound = this.bookRepository
+                                    .findByAllParameters(null, null, this.book.getAuthor(), null,
+                                        null,
+                                        null, null, null);
+
+        assertThat(booksFound.isEmpty()).isEqualTo(false);
+        assertThat(booksFound.get(0).getId()).isNotNull();
+        assertThat(booksFound.get(0).getAuthor()).isEqualTo(this.book.getAuthor());
+        assertThat(booksFound.get(0).getImage()).isEqualTo(this.book.getImage());
+        assertThat(booksFound.get(0).getTitle()).isEqualTo(this.book.getTitle());
+        assertThat(booksFound.get(0).getSubtitle()).isEqualTo(this.book.getSubtitle());
+        assertThat(booksFound.get(0).getPublisher()).isEqualTo(this.book.getPublisher());
+        assertThat(booksFound.get(0).getYear()).isEqualTo(this.book.getYear());
+        assertThat(booksFound.get(0).getPages()).isEqualTo(this.book.getPages());
+        assertThat(booksFound.get(0).getIsbn()).isEqualTo(this.book.getIsbn());
+    }
+
+    @Test
+    public void whenFindByAllParametersFilterByTitle_thenBookShouldFound() {
+        List<Book> booksFound = this.bookRepository
+                                    .findByAllParameters(null, null, null, this.book.getTitle(),
+                                        null,
+                                        null, null, null);
+
+        assertThat(booksFound.isEmpty()).isEqualTo(false);
+        assertThat(booksFound.get(0).getId()).isNotNull();
+        assertThat(booksFound.get(0).getAuthor()).isEqualTo(this.book.getAuthor());
+        assertThat(booksFound.get(0).getImage()).isEqualTo(this.book.getImage());
+        assertThat(booksFound.get(0).getTitle()).isEqualTo(this.book.getTitle());
+        assertThat(booksFound.get(0).getSubtitle()).isEqualTo(this.book.getSubtitle());
+        assertThat(booksFound.get(0).getPublisher()).isEqualTo(this.book.getPublisher());
+        assertThat(booksFound.get(0).getYear()).isEqualTo(this.book.getYear());
+        assertThat(booksFound.get(0).getPages()).isEqualTo(this.book.getPages());
+        assertThat(booksFound.get(0).getIsbn()).isEqualTo(this.book.getIsbn());
+    }
+
+    @Test
+    public void whenFindByAllParametersFilterBySubtitle_thenBookShouldFound() {
+        List<Book> booksFound = this.bookRepository
+                                    .findByAllParameters(null, null, null, null,
+                                        this.book.getSubtitle(), null, null, null);
+
+        assertThat(booksFound.isEmpty()).isEqualTo(false);
+        assertThat(booksFound.get(0).getId()).isNotNull();
+        assertThat(booksFound.get(0).getAuthor()).isEqualTo(this.book.getAuthor());
+        assertThat(booksFound.get(0).getImage()).isEqualTo(this.book.getImage());
+        assertThat(booksFound.get(0).getTitle()).isEqualTo(this.book.getTitle());
+        assertThat(booksFound.get(0).getSubtitle()).isEqualTo(this.book.getSubtitle());
+        assertThat(booksFound.get(0).getPublisher()).isEqualTo(this.book.getPublisher());
+        assertThat(booksFound.get(0).getYear()).isEqualTo(this.book.getYear());
+        assertThat(booksFound.get(0).getPages()).isEqualTo(this.book.getPages());
+        assertThat(booksFound.get(0).getIsbn()).isEqualTo(this.book.getIsbn());
+    }
+
+    @Test
+    public void whenFindByAllParametersFilterByPublisher_thenBookShouldFound() {
+        List<Book> booksFound = this.bookRepository
+                                    .findByAllParameters(null, null, null, null, null,
+                                        this.book.getPublisher(), null, null);
+
+        assertThat(booksFound.isEmpty()).isEqualTo(false);
+        assertThat(booksFound.get(0).getId()).isNotNull();
+        assertThat(booksFound.get(0).getAuthor()).isEqualTo(this.book.getAuthor());
+        assertThat(booksFound.get(0).getImage()).isEqualTo(this.book.getImage());
+        assertThat(booksFound.get(0).getTitle()).isEqualTo(this.book.getTitle());
+        assertThat(booksFound.get(0).getSubtitle()).isEqualTo(this.book.getSubtitle());
+        assertThat(booksFound.get(0).getPublisher()).isEqualTo(this.book.getPublisher());
+        assertThat(booksFound.get(0).getYear()).isEqualTo(this.book.getYear());
+        assertThat(booksFound.get(0).getPages()).isEqualTo(this.book.getPages());
+        assertThat(booksFound.get(0).getIsbn()).isEqualTo(this.book.getIsbn());
+    }
+
+    @Test
+    public void whenFindByAllParametersFilterByYear_thenBookShouldFound() {
+        List<Book> booksFound = this.bookRepository
+                                    .findByAllParameters(null, null, null, null, null, null,
+                                        this.book.getYear(), null);
+
+        assertThat(booksFound.isEmpty()).isEqualTo(false);
+        assertThat(booksFound.get(0).getId()).isNotNull();
+        assertThat(booksFound.get(0).getAuthor()).isEqualTo(this.book.getAuthor());
+        assertThat(booksFound.get(0).getImage()).isEqualTo(this.book.getImage());
+        assertThat(booksFound.get(0).getTitle()).isEqualTo(this.book.getTitle());
+        assertThat(booksFound.get(0).getSubtitle()).isEqualTo(this.book.getSubtitle());
+        assertThat(booksFound.get(0).getPublisher()).isEqualTo(this.book.getPublisher());
+        assertThat(booksFound.get(0).getYear()).isEqualTo(this.book.getYear());
+        assertThat(booksFound.get(0).getPages()).isEqualTo(this.book.getPages());
+        assertThat(booksFound.get(0).getIsbn()).isEqualTo(this.book.getIsbn());
+    }
+
+    @Test
+    public void whenFindByAllParametersFilterByIsbn_thenBookShouldFound() {
+        List<Book> booksFound = this.bookRepository
+                                    .findByAllParameters(null, null, null, null, null, null, null,
+                                        this.book.getIsbn());
+
+        assertThat(booksFound.isEmpty()).isEqualTo(false);
+        assertThat(booksFound.get(0).getId()).isNotNull();
+        assertThat(booksFound.get(0).getAuthor()).isEqualTo(this.book.getAuthor());
+        assertThat(booksFound.get(0).getImage()).isEqualTo(this.book.getImage());
+        assertThat(booksFound.get(0).getTitle()).isEqualTo(this.book.getTitle());
+        assertThat(booksFound.get(0).getSubtitle()).isEqualTo(this.book.getSubtitle());
+        assertThat(booksFound.get(0).getPublisher()).isEqualTo(this.book.getPublisher());
+        assertThat(booksFound.get(0).getYear()).isEqualTo(this.book.getYear());
+        assertThat(booksFound.get(0).getPages()).isEqualTo(this.book.getPages());
+        assertThat(booksFound.get(0).getIsbn()).isEqualTo(this.book.getIsbn());
+    }
+
 }
