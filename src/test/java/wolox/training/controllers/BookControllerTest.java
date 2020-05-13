@@ -34,6 +34,7 @@ import wolox.training.config.SecurityConfigTest;
 import wolox.training.factories.BookFactory;
 import wolox.training.models.Book;
 import wolox.training.repositories.BookRepository;
+import wolox.training.services.OpenLibraryService;
 
 @RunWith(SpringRunner.class)
 @WebMvcTest(BookController.class)
@@ -48,6 +49,9 @@ public class BookControllerTest {
 
     @Autowired
     private UserDetailsService userDetailsService;
+
+    @Autowired
+    private OpenLibraryService openLibraryService;
 
     @MockBean
     private BookRepository bookRepository;
@@ -71,6 +75,7 @@ public class BookControllerTest {
             this.book
         ));
     }
+
 
     @Test
     public void whenGetAllBooks_thenReturnJsonArray() throws Exception {
@@ -183,6 +188,40 @@ public class BookControllerTest {
                          .contentType(MediaType.APPLICATION_JSON)
                          .characterEncoding("utf-8")
                          .content(this.objectMapper.writeValueAsString(this.bookMap)))
+            .andExpect(status().is4xxClientError());
+    }
+
+    @Test
+    public void whenSearchABookByISBNAndFoundAtDataBase_thenReturnJSONObject()
+        throws Exception {
+        this.book.setIsbn("test");
+
+        given(this.bookRepository.findFirstByIsbn(this.book.getIsbn()))
+            .willReturn(Optional.of(this.book));
+
+        this.mockMvc
+            .perform(get("/api/books/search?isbn=" + this.book.getIsbn()))
+            .andDo(print())
+            .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    public void whenSearchABookByISBNAndFoundAtExternalService_thenReturnJSONObject()
+        throws Exception {
+        given(this.bookRepository.findFirstByIsbn("0451526538")).willReturn(Optional.empty());
+
+        this.mockMvc
+            .perform(get("/api/books/search?isbn=0451526538"))
+            .andExpect(status().is2xxSuccessful());
+    }
+
+    @Test
+    public void whenSearchABookByISBNAndNotFound_thenReturnBookNotFoundException()
+        throws Exception {
+        given(this.bookRepository.findFirstByIsbn("0000000009")).willReturn(Optional.empty());
+
+        this.mockMvc
+            .perform(get("/api/books/search?isbn=0000000009"))
             .andExpect(status().is4xxClientError());
     }
 }

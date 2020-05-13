@@ -10,6 +10,7 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.security.provisioning.InMemoryUserDetailsManager;
+import wolox.training.services.OpenLibraryService;
 
 public class SecurityConfigTest {
 
@@ -24,6 +25,11 @@ public class SecurityConfigTest {
     @Bean
     public PasswordEncoder passwordEncoder() {
         return new BCryptPasswordEncoder();
+    }
+
+    @Bean
+    public OpenLibraryService openLibraryService() {
+        return new OpenLibraryService();
     }
 
 }

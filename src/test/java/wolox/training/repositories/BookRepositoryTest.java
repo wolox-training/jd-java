@@ -72,4 +72,26 @@ public class BookRepositoryTest {
         assertThat(bookFound.orElse(null)).isNull();
     }
 
+    @Test
+    public void whenSearchABookByISBN_thenBookShouldFound() {
+        Optional<Book> bookFound = this.bookRepository.findFirstByIsbn(this.book.getIsbn());
+
+        assertThat(bookFound.get().getId()).isNotNull();
+        assertThat(bookFound.get().getAuthor()).isEqualTo(this.book.getAuthor());
+        assertThat(bookFound.get().getImage()).isEqualTo(this.book.getImage());
+        assertThat(bookFound.get().getTitle()).isEqualTo(this.book.getTitle());
+        assertThat(bookFound.get().getSubtitle()).isEqualTo(this.book.getSubtitle());
+        assertThat(bookFound.get().getPublisher()).isEqualTo(this.book.getPublisher());
+        assertThat(bookFound.get().getYear()).isEqualTo(this.book.getYear());
+        assertThat(bookFound.get().getPages()).isEqualTo(this.book.getPages());
+        assertThat(bookFound.get().getIsbn()).isEqualTo(this.book.getIsbn());
+    }
+
+    @Test
+    public void whenSearchABookByISBN_thenBookNotFound() {
+        Optional<Book> bookFound = this.bookRepository.findFirstByIsbn(faker.book().author());
+
+        assertThat(bookFound.orElse(null)).isNull();
+    }
+
 }

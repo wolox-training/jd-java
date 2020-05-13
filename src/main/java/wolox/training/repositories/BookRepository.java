@@ -20,4 +20,12 @@ public interface BookRepository extends CrudRepository<Book, Long> {
      */
     Optional<Book> findFirstByAuthor(String author);
 
+    /**
+     * Find first record by isbn
+     *
+     * @param isbn isbn's name
+     * @return optional book
+     */
+    Optional<Book> findFirstByIsbn(String isbn);
+
 }
